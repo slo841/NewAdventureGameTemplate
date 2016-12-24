@@ -6,11 +6,9 @@ import java.io.IOException;
 import javax.imageio.ImageIO;
 
 public class SpriteSheet {
-
     public String path;
     public int width;
     public int height;
-
     public int[] pixels;
 
     public SpriteSheet(String path) {
@@ -32,5 +30,9 @@ public class SpriteSheet {
         for (int i = 0; i < pixels.length; i++) {
             pixels[i] = (pixels[i] & 0xff) / 64;
         }
+    }
+    
+    public int idFor(int row, int col) {
+    	return row*width + col;
     }
 }

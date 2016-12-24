@@ -11,13 +11,9 @@ import javax.swing.JFrame;
 import javax.swing.JOptionPane;
 
 import ca.vanzeben.game.entities.Player;
-import ca.vanzeben.game.entities.PlayerMP;
 import ca.vanzeben.game.gfx.Screen;
 import ca.vanzeben.game.gfx.SpriteSheet;
 import ca.vanzeben.game.level.Level;
-import ca.vanzeben.game.net.GameClient;
-import ca.vanzeben.game.net.GameServer;
-import ca.vanzeben.game.net.packets.Packet00Login;
 
 public class Game extends Canvas implements Runnable {
 
@@ -47,9 +43,6 @@ public class Game extends Canvas implements Runnable {
     public Level level;
     public Player player;
 
-    public GameClient socketClient;
-    public GameServer socketServer;
-
     public boolean debug = true;
     public boolean isApplet = false;
 
@@ -70,16 +63,8 @@ public class Game extends Canvas implements Runnable {
         screen = new Screen(WIDTH, HEIGHT, new SpriteSheet("/sprite_sheet.png"));
         input = new InputHandler(this);
         level = new Level("/levels/water_test_level.png");
-        player = new PlayerMP(level, 100, 100, input, JOptionPane.showInputDialog(this, "Please enter a username"),
-                null, -1);
-        level.addEntity(player);
-        if (!isApplet) {
-            Packet00Login loginPacket = new Packet00Login(player.getUsername(), player.x, player.y);
-            if (socketServer != null) {
-                socketServer.addConnection((PlayerMP) player, loginPacket);
-            }
-            loginPacket.writeData(socketClient);
-        }
+        player = new Player(level, 100, 100, input, JOptionPane.showInputDialog(this, "Please enter a username"));
+        level.addPlayer(player);
     }
 
     public synchronized void start() {
@@ -87,15 +72,6 @@ public class Game extends Canvas implements Runnable {
 
         thread = new Thread(this, NAME + "_main");
         thread.start();
-        if (!isApplet) {
-            if (JOptionPane.showConfirmDialog(this, "Do you want to run the server") == 0) {
-                socketServer = new GameServer(this);
-                socketServer.start();
-            }
-
-            socketClient = new GameClient(this, "localhost");
-            socketClient.start();
-        }
     }
 
     public synchronized void stop() {
@@ -165,8 +141,8 @@ public class Game extends Canvas implements Runnable {
             return;
         }
 
-        int xOffset = player.x - (screen.width / 2);
-        int yOffset = player.y - (screen.height / 2);
+        int xOffset = player.x() - (screen.width / 2);
+        int yOffset = player.y() - (screen.height / 2);
 
         level.renderTiles(screen, xOffset, yOffset);
         level.renderEntities(screen);

@@ -8,20 +8,19 @@ import java.util.List;
 
 import javax.imageio.ImageIO;
 
-import ca.vanzeben.game.entities.Entity;
-import ca.vanzeben.game.entities.PlayerMP;
+import ca.vanzeben.game.entities.Player;
 import ca.vanzeben.game.gfx.Screen;
 import ca.vanzeben.game.level.tiles.Tile;
 
 public class Level {
-
     private byte[] tiles;
     public int width;
     public int height;
-    private List<Entity> entities = new ArrayList<Entity>();
     private String imagePath;
     private BufferedImage image;
 
+    private Player player;
+    
     public Level(String imagePath) {
         if (imagePath != null) {
             this.imagePath = imagePath;
@@ -86,14 +85,8 @@ public class Level {
         }
     }
 
-    public synchronized List<Entity> getEntities() {
-        return this.entities;
-    }
-
     public void tick() {
-        for (Entity e : getEntities()) {
-            e.tick();
-        }
+        player.tick();
 
         for (Tile t : Tile.tiles) {
             if (t == null) {
@@ -123,9 +116,7 @@ public class Level {
     }
 
     public void renderEntities(Screen screen) {
-        for (Entity e : getEntities()) {
-            e.render(screen);
-        }
+        player.render(screen);
     }
 
     public Tile getTile(int x, int y) {
@@ -134,39 +125,7 @@ public class Level {
         return Tile.tiles[tiles[x + y * width]];
     }
 
-    public synchronized void addEntity(Entity entity) {
-        this.getEntities().add(entity);
-    }
-
-    public synchronized void removePlayerMP(String username) {
-        int index = 0;
-        for (Entity e : getEntities()) {
-            if (e instanceof PlayerMP && ((PlayerMP) e).getUsername().equals(username)) {
-                break;
-            }
-            index++;
-        }
-        this.getEntities().remove(index);
-    }
-
-    private int getPlayerMPIndex(String username) {
-        int index = 0;
-        for (Entity e : getEntities()) {
-            if (e instanceof PlayerMP && ((PlayerMP) e).getUsername().equals(username)) {
-                break;
-            }
-            index++;
-        }
-        return index;
-    }
-
-    public synchronized void movePlayer(String username, int x, int y, int numSteps, boolean isMoving, int movingDir) {
-        int index = getPlayerMPIndex(username);
-        PlayerMP player = (PlayerMP) this.getEntities().get(index);
-        player.x = x;
-        player.y = y;
-        player.setMoving(isMoving);
-        player.setNumSteps(numSteps);
-        player.setMovingDir(movingDir);
-    }
+		public void addPlayer(Player player) {
+			 this.player = player;
+		}
 }

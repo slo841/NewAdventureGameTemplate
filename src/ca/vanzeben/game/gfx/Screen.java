@@ -1,7 +1,6 @@
 package ca.vanzeben.game.gfx;
 
 public class Screen {
-
     public static final int MAP_WIDTH = 64;
     public static final int MAP_WIDTH_MASK = MAP_WIDTH - 1;
 
@@ -16,7 +15,7 @@ public class Screen {
     public int width;
     public int height;
 
-    public SpriteSheet sheet;
+    private SpriteSheet sheet;
 
     public Screen(int width, int height, SpriteSheet sheet) {
         this.width = width;
@@ -26,6 +25,20 @@ public class Screen {
         pixels = new int[width * height];
     }
 
+    /***
+     * Render a tile on the screen at a particular location.
+     * @param xPos x coordinate to render the tile
+     * @param yPos y coordinate to render the tile
+     * @param tileRow row # in sprite sheet for the tile to be rendered
+     * @param tileCol col # in the sprite sheet for the tile to be rendered
+     * @param colour color 
+     * @param mirrorDir 1 mirrors x, 2 mirrors y, 0 mirrors none, 3 mirrors both
+     * @param scale
+     */
+    public void render(int xPos, int yPos, int tileRow, int tileCol, int colour, int mirrorDir, int scale) {
+    	render(xPos, yPos, sheet.idFor(tileRow,  tileCol), colour, mirrorDir, scale);
+    }
+    
     public void render(int xPos, int yPos, int tile, int colour, int mirrorDir, int scale) {
         xPos -= xOffset;
         yPos -= yOffset;

@@ -3,8 +3,6 @@ package ca.vanzeben.game;
 import java.awt.event.WindowEvent;
 import java.awt.event.WindowListener;
 
-import ca.vanzeben.game.net.packets.Packet01Disconnect;
-
 public class WindowHandler implements WindowListener {
 
     private final Game game;
@@ -24,8 +22,7 @@ public class WindowHandler implements WindowListener {
 
     @Override
     public void windowClosing(WindowEvent event) {
-        Packet01Disconnect packet = new Packet01Disconnect(this.game.player.getUsername());
-        packet.writeData(this.game.socketClient);
+
     }
 
     @Override
