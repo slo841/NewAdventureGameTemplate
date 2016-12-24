@@ -14,8 +14,7 @@ public class Screen {
 
     public int width;
     public int height;
-
-    private SpriteSheet sheet;
+    public SpriteSheet sheet;
 
     public Screen(int width, int height, SpriteSheet sheet) {
         this.width = width;
