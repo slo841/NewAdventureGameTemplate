@@ -4,7 +4,6 @@ import ca.vanzeben.game.gfx.Screen;
 import ca.vanzeben.game.level.Level;
 
 public class BasicTile extends Tile {
-
     protected int tileId;
     protected int tileColour;
 
@@ -18,7 +17,6 @@ public class BasicTile extends Tile {
     }
 
     public void render(Screen screen, Level level, int x, int y) {
-        screen.render(x, y, tileId, tileColour, 0x00, 1);
+        screen.render(x, y, tileSheet, tileId, tileColour, Screen.MirrorDirection.NONE, 1);
     }
-
 }

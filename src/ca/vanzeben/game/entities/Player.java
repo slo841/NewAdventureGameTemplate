@@ -5,6 +5,7 @@ import ca.vanzeben.game.InputHandler;
 import ca.vanzeben.game.gfx.Colours;
 import ca.vanzeben.game.gfx.Font;
 import ca.vanzeben.game.gfx.Screen;
+import ca.vanzeben.game.gfx.SpriteSheet;
 import ca.vanzeben.game.level.Level;
 import ca.vanzeben.game.level.tiles.Tile;
 
@@ -25,14 +26,16 @@ public class Player {
 	private int tickCount = 0;
 	private String username;
 
-	public Player(Level level, int x, int y, InputHandler input,
-			String username) {
+	private SpriteSheet sheet;
 
+	public Player(Level level, int x, int y, InputHandler input, String username,
+			SpriteSheet sheet) {
 		this.x = x;
 		this.y = y;
 		this.level = level;
 		this.input = input;
 		this.username = username;
+		this.sheet = sheet;
 	}
 
 	public void move(int xa, int ya) {
@@ -74,11 +77,11 @@ public class Player {
 	public int x() {
 		return x;
 	}
-	
+
 	public int y() {
 		return y;
 	}
-	
+
 	public String getName() {
 		return name;
 	}
@@ -140,52 +143,62 @@ public class Player {
 	}
 
 	public void render(Screen screen) {
-		int xTile = 0;
-		int yTile = 28;
 		int walkingSpeed = 4;
 		int flipTop = (numSteps >> walkingSpeed) & 1;
 		int flipBottom = (numSteps >> walkingSpeed) & 1;
 
-		if (movingDir == 1) {
-			xTile += 2;
-		} else if (movingDir > 1) {
-			xTile += 4 + ((numSteps >> walkingSpeed) & 1) * 2;
-			flipTop = (movingDir - 1) % 2;
-		}
+		// if (movingDir == 1) {
+		// xTile += 2;
+		// } else if (movingDir > 1) {
+		// xTile += 4 + ((numSteps >> walkingSpeed) & 1) * 2;
+		// flipTop = (movingDir - 1) % 2;
+		// }
 
-		int modifier = 8 * scale;
-		int xOffset = x - modifier / 2;
-		int yOffset = y - modifier / 2 - 4;
-		if (isSwimming) {
-			int waterColour = 0;
-			yOffset += 4;
-			if (tickCount % 60 < 15) {
-				waterColour = Colours.get(-1, -1, 225, -1);
-			} else if (15 <= tickCount % 60 && tickCount % 60 < 30) {
-				yOffset -= 1;
-				waterColour = Colours.get(-1, 225, 115, -1);
-			} else if (30 <= tickCount % 60 && tickCount % 60 < 45) {
-				waterColour = Colours.get(-1, 115, -1, 225);
-			} else {
-				yOffset -= 1;
-				waterColour = Colours.get(-1, 225, 115, -1);
-			}
-			screen.render(xOffset, yOffset + 3, 0 + 27 * 32, waterColour, 0x00, 1);
-			screen.render(xOffset + 8, yOffset + 3, 0 + 27 * 32, waterColour, 0x01,
-					1);
-		}
-		screen.render(xOffset + (modifier * flipTop), yOffset, xTile + yTile * 32,
-				colour, flipTop, scale);
-		screen.render(xOffset + modifier - (modifier * flipTop), yOffset,
-				(xTile + 1) + yTile * 32, colour, flipTop, scale);
+		int xOffset = x;
+		int yOffset = y;
 
-		if (!isSwimming) {
-			screen.render(xOffset + (modifier * flipBottom), yOffset + modifier,
-					xTile + (yTile + 1) * 32, colour, flipBottom, scale);
-			screen.render(xOffset + modifier - (modifier * flipBottom),
-					yOffset + modifier, (xTile + 1) + (yTile + 1) * 32, colour,
-					flipBottom, scale);
+		// if (isSwimming) {
+		// int waterColour = 0;
+		// yOffset += 4;
+		// if (tickCount % 60 < 15) {
+		// waterColour = Colours.get(-1, -1, 225, -1);
+		// } else if (15 <= tickCount % 60 && tickCount % 60 < 30) {
+		// yOffset -= 1;
+		// waterColour = Colours.get(-1, 225, 115, -1);
+		// } else if (30 <= tickCount % 60 && tickCount % 60 < 45) {
+		// waterColour = Colours.get(-1, 115, -1, 225);
+		// } else {
+		// yOffset -= 1;
+		// waterColour = Colours.get(-1, 225, 115, -1);
+		// }
+		// screen.render(xOffset, yOffset + 3, 0 + 27 * 32, waterColour, 0x00, 1);
+		// screen.render(xOffset + 8, yOffset + 3, 0 + 27 * 32, waterColour, 0x01,
+		// 1);
+		// }
+		// screen.render(xOffset + (modifier * flipTop), yOffset, xTile + yTile *
+		// 32,
+		// colour, flipTop, scale);
+		// screen.render(xOffset + modifier - (modifier * flipTop), yOffset,
+		// (xTile + 1) + yTile * 32, colour, flipTop, scale);
+
+		// if (!isSwimming) {
+		// screen.render(xOffset + (modifier * flipBottom), yOffset + modifier,
+		// xTile + (yTile + 1) * 32, colour, flipBottom, scale);
+		// screen.render(xOffset + modifier - (modifier * flipBottom),
+		// yOffset + modifier, (xTile + 1) + (yTile + 1) * 32, colour,
+		// flipBottom, scale);
+		// }
+
+		if (tickCount % 60 < 15) {
+			screen.render(x, y, sheet, 0, 0, 0, Screen.MirrorDirection.NONE, 1);
+		} else if (15 <= tickCount % 60 && tickCount % 60 < 30) {
+			screen.render(x, y, sheet, 0, 1, 0, Screen.MirrorDirection.NONE, 1);
+		} else if (30 <= tickCount % 60 && tickCount % 60 < 45) {
+			screen.render(x, y, sheet, 0, 2, 0, Screen.MirrorDirection.NONE, 1);
+		} else {
+			screen.render(x, y, sheet, 0, 3, 0, Screen.MirrorDirection.NONE, 1);
 		}
+		
 		if (username != null) {
 			Font.render(username, screen, xOffset - ((username.length() - 1) / 2 * 8),
 					yOffset - 10, Colours.get(-1, -1, -1, 555), 1);

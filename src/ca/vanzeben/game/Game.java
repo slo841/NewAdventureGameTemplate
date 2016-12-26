@@ -19,7 +19,7 @@ public class Game extends Canvas implements Runnable {
 
     private static final long serialVersionUID = 1L;
 
-    public static final int WIDTH = 160;
+    public static final int WIDTH = 160*2;
     public static final int HEIGHT = WIDTH / 12 * 9;
     public static final int SCALE = 3;
     public static final String NAME = "Game";
@@ -38,6 +38,10 @@ public class Game extends Canvas implements Runnable {
     private int[] colours = new int[6 * 6 * 6];
 
     private Screen screen;
+    
+    public SpriteSheet characterSheet = new SpriteSheet("characters", "/entities/spritestrip.png", 1, 6);
+    public SpriteSheet backgroundTiles;
+    
     public InputHandler input;
     public WindowHandler windowHandler;
     public Level level;
@@ -48,6 +52,9 @@ public class Game extends Canvas implements Runnable {
 
     public void init() {
         game = this;
+        
+        characterSheet.displayInfo();
+        
         int index = 0;
         
         for (int r = 0; r < 6; r++) {
@@ -62,10 +69,10 @@ public class Game extends Canvas implements Runnable {
             }
         }
         
-        screen = new Screen(WIDTH, HEIGHT, new SpriteSheet("/sprite_sheet.png"));
+        screen = new Screen(WIDTH, HEIGHT);
         input = new InputHandler(this);
         level = new Level("/levels/water_test_level.png");
-        player = new Player(level, 100, 100, input, JOptionPane.showInputDialog(this, "Please enter a username"));
+        player = new Player(level, 100, 100, input, JOptionPane.showInputDialog(this, "Please enter a username"), characterSheet);
         level.addPlayer(player);
     }
 
@@ -143,6 +150,7 @@ public class Game extends Canvas implements Runnable {
             return;
         }
 
+        // Calculate offset for the display so it's centered on the player
         int xOffset = player.x() - (screen.width / 2);
         int yOffset = player.y() - (screen.height / 2);
 
@@ -152,8 +160,9 @@ public class Game extends Canvas implements Runnable {
         for (int y = 0; y < screen.height; y++) {
             for (int x = 0; x < screen.width; x++) {
                 int colourCode = screen.pixels[x + y * screen.width];
-                if (colourCode < 255)
-                    pixels[x + y * WIDTH] = colours[colourCode];
+                //if (colourCode < 255)
+                //    pixels[x + y * WIDTH] = colours[colourCode];
+                pixels[x + y * WIDTH] = colourCode;
             }
         }
 
