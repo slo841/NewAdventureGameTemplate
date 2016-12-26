@@ -106,7 +106,7 @@ public class Level {
         if (yOffset > ((height << 3) - screen.height))
             yOffset = ((height << 3) - screen.height);
 
-        screen.setOffset(xOffset, yOffset);
+        screen.setScreenPosition(xOffset, yOffset);
 
         for (int y = (yOffset >> 3); y < (yOffset + screen.height >> 3) + 1; y++) {
             for (int x = (xOffset >> 3); x < (xOffset + screen.width >> 3) + 1; x++) {

@@ -16,189 +16,187 @@ import ca.vanzeben.game.gfx.SpriteSheet;
 import ca.vanzeben.game.level.Level;
 
 public class Game extends Canvas implements Runnable {
+	private static final long serialVersionUID = 1L;
 
-    private static final long serialVersionUID = 1L;
+	public static final int SCREEN_WIDTH = 160 * 2;
+	public static final int SCREEN_HEIGHT = SCREEN_WIDTH / 12 * 9;
+	public static final int SCALE = 3;
+	public static final String NAME = "Game";
+	public static final Dimension DIMENSIONS = new Dimension(SCREEN_WIDTH * SCALE,
+			SCREEN_HEIGHT * SCALE);
+	public static Game game;
+	public JFrame frame;
 
-    public static final int WIDTH = 160*2;
-    public static final int HEIGHT = WIDTH / 12 * 9;
-    public static final int SCALE = 3;
-    public static final String NAME = "Game";
-    public static final Dimension DIMENSIONS = new Dimension(WIDTH * SCALE, HEIGHT * SCALE);
-    public static Game game;
+	private Thread thread;
 
-    public JFrame frame;
+	public boolean running = false;
+	public int tickCount = 0;
 
-    private Thread thread;
+	// private int[] colours = new int[6 * 6 * 6];
 
-    public boolean running = false;
-    public int tickCount = 0;
+	private Screen screen;
 
-    private BufferedImage image = new BufferedImage(WIDTH, HEIGHT, BufferedImage.TYPE_INT_RGB);
-    private int[] pixels = ((DataBufferInt) image.getRaster().getDataBuffer()).getData();
-    private int[] colours = new int[6 * 6 * 6];
+	public SpriteSheet characterSheet = new SpriteSheet("characters",
+			"/entities/spritestrip.png", 1, 6);
+	public SpriteSheet backgroundTiles;
 
-    private Screen screen;
-    
-    public SpriteSheet characterSheet = new SpriteSheet("characters", "/entities/spritestrip.png", 1, 6);
-    public SpriteSheet backgroundTiles;
-    
-    public InputHandler input;
-    public WindowHandler windowHandler;
-    public Level level;
-    public Player player;
+	public InputHandler input;
+	public WindowHandler windowHandler;
+	public Level level;
+	public Player player;
 
-    public boolean debug = true;
-    public boolean isApplet = false;
+	public boolean debug = true;
+	public boolean isApplet = false;
 
-    public void init() {
-        game = this;
-        
-        characterSheet.displayInfo();
-        
-        int index = 0;
-        
-        for (int r = 0; r < 6; r++) {
-            for (int g = 0; g < 6; g++) {
-                for (int b = 0; b < 6; b++) {
-                    int rr = (r * 255 / 5);
-                    int gg = (g * 255 / 5);
-                    int bb = (b * 255 / 5);
+	public void init() {
+		game = this;
 
-                    colours[index++] = rr << 16 | gg << 8 | bb;
-                }
-            }
-        }
-        
-        screen = new Screen(WIDTH, HEIGHT);
-        input = new InputHandler(this);
-        level = new Level("/levels/water_test_level.png");
-        player = new Player(level, 100, 100, input, JOptionPane.showInputDialog(this, "Please enter a username"), characterSheet);
-        level.addPlayer(player);
-    }
+		characterSheet.displayInfo();
 
-    public synchronized void start() {
-        running = true;
+		int index = 0;
 
-        thread = new Thread(this, NAME + "_main");
-        thread.start();
-    }
+		// for (int r = 0; r < 6; r++) {
+		// for (int g = 0; g < 6; g++) {
+		// for (int b = 0; b < 6; b++) {
+		// int rr = (r * 255 / 5);
+		// int gg = (g * 255 / 5);
+		// int bb = (b * 255 / 5);
+		//
+		// colours[index++] = rr << 16 | gg << 8 | bb;
+		// }
+		// }
+		// }
 
-    public synchronized void stop() {
-        running = false;
+		screen = new Screen(SCREEN_WIDTH, SCREEN_HEIGHT);
+		input = new InputHandler(this);
+		level = new Level("/levels/water_test_level.png");
+		player = new Player(level, 100, 100, input,
+				JOptionPane.showInputDialog(this, "Please enter a username"),
+				characterSheet);
+		level.addPlayer(player);
+	}
 
-        try {
-            thread.join();
-        } catch (InterruptedException e) {
-            e.printStackTrace();
-        }
-    }
+	public synchronized void start() {
+		running = true;
 
-    public void run() {
-        long lastTime = System.nanoTime();
-        double nsPerTick = 1000000000D / 60D;
+		thread = new Thread(this, NAME + "_main");
+		thread.start();
+	}
 
-        int ticks = 0;
-        int frames = 0;
+	public synchronized void stop() {
+		running = false;
 
-        long lastTimer = System.currentTimeMillis();
-        double delta = 0;
+		try {
+			thread.join();
+		} catch (InterruptedException e) {
+			e.printStackTrace();
+		}
+	}
 
-        init();
+	public void run() {
+		long lastTime = System.nanoTime();
+		double nsPerTick = 1000000000D / 60D;
 
-        while (running) {
-            long now = System.nanoTime();
-            delta += (now - lastTime) / nsPerTick;
-            lastTime = now;
-            boolean shouldRender = true;
+		int ticks = 0;
+		int frames = 0;
 
-            while (delta >= 1) {
-                ticks++;
-                tick();
-                delta -= 1;
-                shouldRender = true;
-            }
+		long lastTimer = System.currentTimeMillis();
+		double delta = 0;
 
-            try {
-                Thread.sleep(2);
-            } catch (InterruptedException e) {
-                e.printStackTrace();
-            }
+		init();
 
-            if (shouldRender) {
-                frames++;
-                render();
-            }
+		while (running) {
+			long now = System.nanoTime();
+			delta += (now - lastTime) / nsPerTick;
+			lastTime = now;
+			boolean shouldRender = true;
 
-            if (System.currentTimeMillis() - lastTimer >= 1000) {
-                lastTimer += 1000;
-                debug(DebugLevel.INFO, ticks + " ticks, " + frames + " frames");
-                frames = 0;
-                ticks = 0;
-            }
-        }
-    }
+			while (delta >= 1) {
+				ticks++;
+				tick();
+				delta -= 1;
+				shouldRender = true;
+			}
 
-    public void tick() {
-        tickCount++;
-        level.tick();
-    }
+			try {
+				Thread.sleep(2);
+			} catch (InterruptedException e) {
+				e.printStackTrace();
+			}
 
-    public void render() {
-        BufferStrategy bs = getBufferStrategy();
-        if (bs == null) {
-            createBufferStrategy(3);
-            return;
-        }
+			if (shouldRender) {
+				frames++;
+				render();
+			}
 
-        // Calculate offset for the display so it's centered on the player
-        int xOffset = player.x() - (screen.width / 2);
-        int yOffset = player.y() - (screen.height / 2);
+			if (System.currentTimeMillis() - lastTimer >= 1000) {
+				lastTimer += 1000;
+				debug(DebugLevel.INFO, ticks + " ticks, " + frames + " frames");
+				frames = 0;
+				ticks = 0;
+			}
+		}
+	}
 
-        level.renderTiles(screen, xOffset, yOffset);
-        level.renderEntities(screen);
+	public void tick() {
+		tickCount++;
+		level.tick();
+	}
 
-        for (int y = 0; y < screen.height; y++) {
-            for (int x = 0; x < screen.width; x++) {
-                int colourCode = screen.pixels[x + y * screen.width];
-                //if (colourCode < 255)
-                //    pixels[x + y * WIDTH] = colours[colourCode];
-                pixels[x + y * WIDTH] = colourCode;
-            }
-        }
+	public void render() {
+		BufferStrategy bs = getBufferStrategy();
+		if (bs == null) {
+			createBufferStrategy(3);
+			return;
+		}
+		Graphics g = bs.getDrawGraphics();
+		screen.setGraphicsContext(g); // You must call this BEFORE you render
+																	// anything!
 
-        Graphics g = bs.getDrawGraphics();
-        g.drawImage(image, 0, 0, getWidth(), getHeight(), null);
-        g.dispose();
-        bs.show();
-    }
+		// Calculate offset for the display so it's centered on the player
+		int xOffset = player.x() - (screen.width / 2);
+		int yOffset = player.y() - (screen.height / 2);
 
-    public static long fact(int n) {
-        if (n <= 1) {
-            return 1;
-        } else {
-            return n * fact(n - 1);
-        }
-    }
+		// *****************************************************************************************
+		// Do all rendering with screen here, after setting it graphics context
 
-    public void debug(DebugLevel level, String msg) {
-        switch (level) {
-        default:
-        case INFO:
-            if (debug) {
-                System.out.println("[" + NAME + "] " + msg);
-            }
-            break;
-        case WARNING:
-            System.out.println("[" + NAME + "] [WARNING] " + msg);
-            break;
-        case SEVERE:
-            System.out.println("[" + NAME + "] [SEVERE]" + msg);
-            this.stop();
-            break;
-        }
-    }
+		level.renderTiles(screen, xOffset, yOffset);
+		level.renderEntities(screen);
 
-    public static enum DebugLevel {
-        INFO, WARNING, SEVERE;
-    }
+		// *****************************************************************************************
+		// Dispose of current context and show the rendered buffer
+		
+		g.dispose();
+		bs.show();
+	}
+
+	public static long fact(int n) {
+		if (n <= 1) {
+			return 1;
+		} else {
+			return n * fact(n - 1);
+		}
+	}
+
+	public void debug(DebugLevel level, String msg) {
+		switch (level) {
+		default:
+		case INFO:
+			if (debug) {
+				System.out.println("[" + NAME + "] " + msg);
+			}
+			break;
+		case WARNING:
+			System.out.println("[" + NAME + "] [WARNING] " + msg);
+			break;
+		case SEVERE:
+			System.out.println("[" + NAME + "] [SEVERE]" + msg);
+			this.stop();
+			break;
+		}
+	}
+
+	public static enum DebugLevel {
+		INFO, WARNING, SEVERE;
+	}
 }

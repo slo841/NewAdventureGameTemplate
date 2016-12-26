@@ -16,28 +16,29 @@ public class SpriteSheet {
 		private int spriteWidth, spriteHeight;
     
 		private int[] pixels;
+		private BufferedImage sheetImage;
 
     public SpriteSheet(String name, String path, int numSpritesHeight, int numSpritesWidth) {
-        BufferedImage image = null;
+        sheetImage = null;
         try {
-            image = ImageIO.read(SpriteSheet.class.getResourceAsStream(path));
+        	sheetImage = ImageIO.read(SpriteSheet.class.getResourceAsStream(path));
         } catch (IOException e) {
             e.printStackTrace();
         }
 
-        if (image == null) { return; }
+        if (sheetImage == null) { return; }
 
         this.name = name;
         this.path = path;
-        this.pixelWidth = image.getWidth();
-        this.pixelHeight = image.getHeight();
+        this.pixelWidth = sheetImage.getWidth();
+        this.pixelHeight = sheetImage.getHeight();
         this.numSpritesHeight = numSpritesHeight;
         this.numSpritesWidth = numSpritesWidth;
 
         this.spriteWidth = this.pixelWidth / this.numSpritesWidth;
         this.spriteHeight = this.pixelHeight / this.numSpritesHeight;
         
-        pixels = image.getRGB(0, 0, pixelWidth, pixelHeight, null, 0, pixelWidth);
+        pixels = sheetImage.getRGB(0, 0, pixelWidth, pixelHeight, null, 0, pixelWidth);
 
 //        for (int i = 0; i < pixels.length; i++) {
 //            pixels[i] = (pixels[i] & 0xff) / 64;
@@ -126,5 +127,9 @@ public class SpriteSheet {
 			System.out.println("Full spritesheet pixel size: " + this.pixelWidth + ", " + this.pixelHeight);
 			System.out.println("Num sprites (rows, cols): " + this.numSpritesWidth + ", " + this.numSpritesHeight);
 			System.out.println("Size per sprite: " + this.spriteWidth + ", " + this.spriteHeight);
+		}
+		
+		public BufferedImage getImage() {
+			return this.sheetImage;
 		}
 }
