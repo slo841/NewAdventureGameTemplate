@@ -18,12 +18,12 @@ import ca.vanzeben.game.level.Level;
 public class Game extends Canvas implements Runnable {
 	private static final long serialVersionUID = 1L;
 
-	public static final int SCREEN_WIDTH = 160 * 2;
+	public static final int SCREEN_WIDTH = 160*3;
 	public static final int SCREEN_HEIGHT = SCREEN_WIDTH / 12 * 9;
-	public static final int SCALE = 3;
+	public static final int SCALE = 1;
+
 	public static final String NAME = "Game";
-	public static final Dimension DIMENSIONS = new Dimension(SCREEN_WIDTH * SCALE,
-			SCREEN_HEIGHT * SCALE);
+	public static final Dimension DIMENSIONS = new Dimension(SCREEN_WIDTH * SCALE, SCREEN_HEIGHT * SCALE);
 	public static Game game;
 	public JFrame frame;
 
@@ -154,18 +154,26 @@ public class Game extends Canvas implements Runnable {
 																	// anything!
 
 		// Calculate offset for the display so it's centered on the player
-		int xOffset = player.x() - (screen.width / 2);
-		int yOffset = player.y() - (screen.height / 2);
+		int screenX = player.x() - (screen.width / 2);
+		int screenY = player.y() - (screen.height / 2);
+
+		// Limit the screen position
+		screenX = Math.max(0, screenX);		// if < 0 set to 0
+		screenY = Math.max(0, screenY);
+		screenX = Math.min((level.getLevelWidth() - screen.width), screenX);		// if > max, set to max
+		screenY = Math.min((level.getLevelHeight() - screen.height),screenY);		// if > max, set to max
+		
+		screen.setScreenPosition(screenX, screenY);
 
 		// *****************************************************************************************
 		// Do all rendering with screen here, after setting it graphics context
 
-		level.renderTiles(screen, xOffset, yOffset);
+		level.renderTiles(screen);
 		level.renderEntities(screen);
 
 		// *****************************************************************************************
 		// Dispose of current context and show the rendered buffer
-		
+
 		g.dispose();
 		bs.show();
 	}

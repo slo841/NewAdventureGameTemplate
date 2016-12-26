@@ -42,9 +42,9 @@ public class Screen {
 
 	public int[] nextFramePixels;
 
-	public int xOffset = 0; // Number of pixels to offset screen by (within the
+	public int x = 0; // Number of pixels to offset screen by (within the
 													// level image)
-	public int yOffset = 0;
+	public int y = 0;
 
 	public int width;
 	public int height;
@@ -81,9 +81,9 @@ public class Screen {
 			System.err.println(
 					"Graphics context is null. Canvas object for Game must call setGraphicsContext( getBufferStrategy().getDrawGraphics() );");
 		}
-		xPos -= xOffset; // change world coordinates (xPos, yPos) to screen
+		xPos -= x; // change world coordinates (xPos, yPos) to screen
 											// coordinates
-		yPos -= yOffset;
+		yPos -= y;
 
 		int sourcex1 = tileCol * sheet.getSpriteWidth();
 		int sourcey1 = tileRow * sheet.getSpriteHeight();
@@ -156,8 +156,8 @@ public class Screen {
 	 * @param yOffset
 	 */
 	public void setScreenPosition(int xOffset, int yOffset) {
-		this.xOffset = xOffset;
-		this.yOffset = yOffset;
+		this.x = xOffset;
+		this.y = yOffset;
 	}
 
 	/***
@@ -177,5 +177,37 @@ public class Screen {
 
 	public void setGraphicsContext(Graphics g) {
 		this.graphicsContext = g;
+	}
+
+	/**
+	 * Return world y-coordinate of upper left of screen.
+	 * @return
+	 */
+	public int getY() {
+		return this.y;
+	}
+	
+	public int getTopY() {
+		return getY();
+	}
+	
+	public int getBottomY() {
+		return getY() + this.height;
+	}
+	
+	/**
+	 * Return world x-coordinate of upper left of screen.
+	 * @return
+	 */
+	public int getX() {
+		return this.x;
+	}
+
+	public int getLeftX() {
+		return getX();
+	}
+	
+	public int getRightX() {
+		return getX() + this.width;
 	}
 }

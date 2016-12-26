@@ -17,7 +17,7 @@ public abstract class Tile {
     protected boolean solid;
     protected boolean emitter;
     private int levelColour;
-
+    
     protected static SpriteSheet tileSheet = new SpriteSheet("tiles", "/sprite_sheet.png", 32, 32);
     
     public Tile(int id, boolean isSolid, boolean isEmitter, int levelColour) {
@@ -48,5 +48,5 @@ public abstract class Tile {
 
     public abstract void tick();
 
-    public abstract void render(Screen screen, Level level, int x, int y);
+    public abstract void render(Screen screen, Level level, int x, int y, int scale);
 }
