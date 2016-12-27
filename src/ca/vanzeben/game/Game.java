@@ -160,7 +160,7 @@ public class Game extends Canvas implements Runnable {
 		// Limit the screen position
 		screenX = Math.max(0, screenX);		// if < 0 set to 0
 		screenY = Math.max(0, screenY);
-		screenX = Math.min((level.getLevelWidth() - screen.width), screenX);		// if > max, set to max
+	  screenX = Math.min((level.getLevelWidth() - screen.width), screenX);		// if > max, set to max
 		screenY = Math.min((level.getLevelHeight() - screen.height),screenY);		// if > max, set to max
 		
 		screen.setScreenPosition(screenX, screenY);

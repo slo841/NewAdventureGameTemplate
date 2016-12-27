@@ -13,7 +13,7 @@ import ca.vanzeben.game.gfx.Screen;
 import ca.vanzeben.game.level.tiles.Tile;
 
 public class Level {
-	private static final int tileSize = 8;		// from sprite sheet
+	private static final int tileSize = 30;		// from sprite sheet
 	private static final int scaleFactor = 2; // how much to scale the tiles up
 	
 	public static final int levelScaleFactor = tileSize*scaleFactor; // each pixel in game ends up
@@ -110,7 +110,7 @@ public class Level {
 						+ 1; tileY++) {
 			for (int tileX = (screen.getLeftX() / levelScaleFactor); tileX < screen
 					.getRightX() / levelScaleFactor + 1; tileX++) {
-				getTile(tileX, tileY).render(screen, this, tileX * levelScaleFactor,
+				getTileAtSourceImageCoordinates(tileX, tileY).render(screen, this, tileX * levelScaleFactor,
 						tileY * levelScaleFactor, scaleFactor);
 			}
 		}
@@ -120,7 +120,17 @@ public class Level {
 		player.render(screen);
 	}
 
-	public Tile getTile(int x, int y) {
+	public Tile getTileAtWorldCoordinates(int x, int y) {
+		if (0 > x || x >= this.getLevelWidth() || 0 > y || y >= this.getLevelHeight())
+			return Tile.VOID;
+		
+		int sourcex = x / this.levelScaleFactor;
+		int sourcey = y / this.levelScaleFactor;
+		
+		return Tile.tiles[tiles[sourcex + sourcey * levelImageWidth]];
+	}
+	
+	public Tile getTileAtSourceImageCoordinates(int x, int y) {
 		if (0 > x || x >= levelImageWidth || 0 > y || y >= levelImageHeight)
 			return Tile.VOID;
 		return Tile.tiles[tiles[x + y * levelImageWidth]];

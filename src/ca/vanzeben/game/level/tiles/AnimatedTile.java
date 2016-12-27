@@ -19,7 +19,7 @@ public class AnimatedTile extends BasicTile {
         if ((System.currentTimeMillis() - lastIterationTime) >= (animationSwitchDelay)) {
             lastIterationTime = System.currentTimeMillis();
             currentAnimationIndex = (currentAnimationIndex + 1) % animationTileCoords.length;
-            this.tileId = (animationTileCoords[currentAnimationIndex][0] + (animationTileCoords[currentAnimationIndex][1] * 32));
+            this.tileId = (animationTileCoords[currentAnimationIndex][0] + (animationTileCoords[currentAnimationIndex][1] * Tile.tileSheet.getNumSpritesWidth()));
         }
     }
 }

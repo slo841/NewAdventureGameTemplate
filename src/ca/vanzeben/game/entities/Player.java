@@ -11,10 +11,11 @@ import ca.vanzeben.game.level.tiles.Tile;
 
 public class Player {
 	private int x, y;
+	private int width, height;
 	private Level level;
 
 	protected String name;
-	protected int speed = 1;
+	protected int speed = 5;
 	protected int numSteps = 0;
 	protected boolean isMoving;
 	protected int movingDir = 1;
@@ -36,50 +37,73 @@ public class Player {
 		this.input = input;
 		this.username = username;
 		this.sheet = sheet;
+		this.width = sheet.getSpriteWidth();
+		this.height = sheet.getSpriteHeight();
 	}
 
-	public void move(int xa, int ya) {
-		System.out.println("Moving: " + xa + " " + ya);
-		if (xa != 0 && ya != 0) {
-			move(xa, 0);
-			move(0, ya);
+	/***
+	 * Move the player by dx, dy
+	 * 
+	 * @param dx
+	 * @param dy
+	 */
+	public void move(int dx, int dy) {
+		if (dx != 0 && dy != 0) {
+			move(dx, 0);
+			move(0, dy);
 			numSteps--;
 			return;
 		}
+
 		numSteps++;
-		if (!hasCollided(xa, ya)) {
-			if (ya < 0)
+		if (!willCollidedWithTile(dx, dy)) {
+			if (dy < 0)
 				movingDir = 0;
-			if (ya > 0)
+			if (dy > 0)
 				movingDir = 1;
-			if (xa < 0)
+			if (dx < 0)
 				movingDir = 2;
-			if (xa > 0)
+			if (dx > 0)
 				movingDir = 3;
-			x += xa * speed;
-			y += ya * speed;
+			x += dx;
+			y += dy;
 		}
 	}
 
-	protected boolean isSolidTile(int xa, int ya, int x, int y) {
-		if (level == null) {
-			return false;
-		}
-		Tile lastTile = level.getTile((this.x + x) >> 3, (this.y + y) >> 3);
-		Tile newTile = level.getTile((this.x + x + xa) >> 3,
-				(this.y + y + ya) >> 3);
-		if (!lastTile.equals(newTile) && newTile.isSolid()) {
-			return true;
-		}
-		return false;
+	public Tile getCurrentTile() {
+		return this.level.getTileAtWorldCoordinates(x, y);
 	}
 
 	public int x() {
 		return x;
 	}
 
+	public int leftX() {
+		return x;
+	}
+
+	public int rightX() {
+		return leftX() + this.width;
+	}
+
 	public int y() {
 		return y;
+	}
+
+	public int topY() {
+		return y;
+	}
+
+	public int bottomY() {
+		return topY() + this.height;
+	}
+
+	public int centerX() {
+		return x + this.width / 2;
+	}
+
+	public int centerY() {
+		return y + this.height / 2;
 	}
 
 	public String getName() {
@@ -111,34 +135,36 @@ public class Player {
 	}
 
 	public void tick() {
-		int xa = 0;
-		int ya = 0;
+		int xDir = 0;
+		int yDir = 0;
 		if (input != null) {
 			if (input.up.isPressed()) {
-				ya--;
+				yDir--;
 			}
 			if (input.down.isPressed()) {
-				ya++;
+				yDir++;
 			}
 			if (input.left.isPressed()) {
-				xa--;
+				xDir--;
 			}
 			if (input.right.isPressed()) {
-				xa++;
+				xDir++;
 			}
 		}
-		if (xa != 0 || ya != 0) {
-			move(xa, ya);
+		
+		if (xDir != 0 || yDir != 0) {
+			move(xDir*speed, yDir*speed);
 			isMoving = true;
 		} else {
 			isMoving = false;
 		}
-		if (level.getTile(this.x >> 3, this.y >> 3).getId() == 3) {
-			isSwimming = true;
-		}
-		if (isSwimming && level.getTile(this.x >> 3, this.y >> 3).getId() != 3) {
-			isSwimming = false;
-		}
+		// if (level.getTile(this.x >> 3, this.y >> 3).getId() == 3) {
+		// isSwimming = true;
+		// }
+		// if (isSwimming && level.getTile(this.x >> 3, this.y >> 3).getId() != 3) {
+		// isSwimming = false;
+		// }
+
 		tickCount++;
 	}
 
@@ -198,39 +224,68 @@ public class Player {
 		} else {
 			screen.render(x, y, sheet, 0, 3, 0, Screen.MirrorDirection.NONE, 3);
 		}
-		
-		if (username != null) {
-			Font.render(username, screen, xOffset - ((username.length() - 1) / 2 * 8),
-					yOffset - 10, Colours.get(-1, -1, -1, 555), 1);
-		}
+
+		Font.render("" + x + ", " + y, screen,
+				xOffset - ((username.length() - 1) / 2 * 8), yOffset - 10,
+				Colours.get(-1, -1, -1, 555), 1);
+
+		// if (username != null) {
+		// Font.render(username, screen, xOffset - ((username.length() - 1) / 2 *
+		// 8),
+		// yOffset - 10, Colours.get(-1, -1, -1, 555), 1);
+		// }
 	}
 
-	public boolean hasCollided(int xa, int ya) {
-		int xMin = 0;
-		int xMax = 7;
-		int yMin = 3;
-		int yMax = 7;
-		for (int x = xMin; x < xMax; x++) {
-			if (isSolidTile(xa, ya, x, yMin)) {
-				return true;
-			}
-		}
-		for (int x = xMin; x < xMax; x++) {
-			if (isSolidTile(xa, ya, x, yMax)) {
-				return true;
-			}
-		}
-		for (int y = yMin; y < yMax; y++) {
-			if (isSolidTile(xa, ya, xMin, y)) {
-				return true;
-			}
-		}
-		for (int y = yMin; y < yMax; y++) {
-			if (isSolidTile(xa, ya, xMax, y)) {
-				return true;
-			}
-		}
+	/***
+	 * Check if player is going to collide with a solid tile if x changes by dx
+	 * and y changes by dy
+	 * 
+	 * @param dx
+	 * @param dy
+	 * @return
+	 */
+	public boolean willCollidedWithTile(int dx, int dy) {
+		// Calculate coordinates of all 4 corners of player sprite
+		// Check each for collision
+
+		Tile upperLeftTile = level.getTileAtWorldCoordinates(leftX() + dx,
+				topY() + dy);
+		Tile lowerLeftTile = level.getTileAtWorldCoordinates(leftX() + dx,
+				bottomY() + dy);
+		Tile upperRightTile = level.getTileAtWorldCoordinates(rightX() + dx,
+				topY() + dy);
+		Tile lowerRightTile = level.getTileAtWorldCoordinates(rightX() + dx,
+				bottomY() + dy);
+
+		if (upperLeftTile.isSolid() || lowerLeftTile.isSolid()
+				|| upperRightTile.isSolid() || lowerRightTile.isSolid())
+			return true;
 		return false;
+
+		// int xMin = 0;
+		// int xMax = 7;
+		// int yMin = 3;
+		// int yMax = 7;
+		// for (int x = xMin; x < xMax; x++) {
+		// if (isSolidTile(xa, ya, x, yMin)) {
+		// return true;
+		// }
+		// }
+		// for (int x = xMin; x < xMax; x++) {
+		// if (isSolidTile(xa, ya, x, yMax)) {
+		// return true;
+		// }
+		// }
+		// for (int y = yMin; y < yMax; y++) {
+		// if (isSolidTile(xa, ya, xMin, y)) {
+		// return true;
+		// }
+		// }
+		// for (int y = yMin; y < yMax; y++) {
+		// if (isSolidTile(xa, ya, xMax, y)) {
+		// return true;
+		// }
+		// }
 	}
 
 	public String getUsername() {
