@@ -76,7 +76,7 @@ public class Screen {
 			return;
 		}
 
-		int dx = (tx / tileSize) * tileSize;
+		int dx = (tx / tileSize)* tileSize;
 		int dy = (ty / tileSize) * tileSize;
 
 		dx -= x; // change world coordinates (xPos, yPos) to screen coordinates
@@ -132,6 +132,7 @@ public class Screen {
 		this.graphicsContext.drawImage(sheet.getImage(), destx1, desty1, destx2,
 				desty2, sourcex1, sourcey1, sourcex2, sourcey2, null);
 
+		// ****** DEBUG ******
 		this.graphicsContext.drawRect(destx1, desty1,
 				sheet.getSpriteWidth() * scale, sheet.getSpriteHeight() * scale);
 

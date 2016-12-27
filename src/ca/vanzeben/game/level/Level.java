@@ -109,10 +109,8 @@ public class Level {
 
 	public void renderTiles(Screen screen) {
 		for (int tileY = screen.getTopY()
-				/ levelScaleFactor; tileY < screen.getBottomY() / levelScaleFactor
-						+ 1; tileY++) {
-			for (int tileX = (screen.getLeftX() / levelScaleFactor); tileX < screen
-					.getRightX() / levelScaleFactor + 1; tileX++) {
+				/ levelScaleFactor; tileY < screen.getBottomY() / levelScaleFactor + 1; tileY++) {
+			for (int tileX = (screen.getLeftX() / levelScaleFactor); tileX < screen.getRightX() / levelScaleFactor + 1; tileX++) {
 				getTileAtSourceImageCoordinates(tileX, tileY).render(screen, this, tileX * levelScaleFactor,
 						tileY * levelScaleFactor, scaleFactor);
 			}

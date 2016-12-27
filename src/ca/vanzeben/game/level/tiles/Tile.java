@@ -8,7 +8,7 @@ import ca.vanzeben.game.level.Level;
 public abstract class Tile {
     public static final Tile[] tiles = new Tile[256];
     public static final Tile VOID = new BasicSolidTile(0, 0, 4, Colours.get(000, -1, -1, -1), 0xFF000000);
-    public static final Tile STONE = new BasicSolidTile(1, 0, 7, Colours.get(-1, 333, -1, -1), 0xFF555555);
+    public static final Tile STONE = new BasicSolidTile(1, 8, 10, Colours.get(-1, 333, -1, -1), 0xFF555555);
     public static final Tile GRASS = new BasicTile(2, 0, 1, Colours.get(-1, 131, 141, -1), 0xFF00FF00);
     public static final Tile WATER = new AnimatedTile(3, new int[][] { { 0, 9 }, { 1, 9 } },
             Colours.get(-1, 004, 115, -1), 0xFF0000FF, 1000);

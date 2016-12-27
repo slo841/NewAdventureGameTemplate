@@ -10,6 +10,7 @@ import ca.vanzeben.game.level.Level;
 import ca.vanzeben.game.level.tiles.Tile;
 
 public class Player {
+	private boolean debug = false;
 	private int x, y;
 	private int width, height;
 	private Level level;
@@ -213,8 +214,8 @@ public class Player {
 		// flipBottom, scale);
 		// }
 
-		int dx = this.centerX();
-		int dy = this.centerY();
+		int dx = x;
+		int dy = y;
 
 		if (tickCount % 60 < 15) {
 			screen.render(dx, dy, sheet, 0, 0, 0, Screen.MirrorDirection.NONE, 1);
@@ -231,10 +232,16 @@ public class Player {
 				Colours.get(-1, -1, -1, 555), 1);
 
 		// *** debug
-		screen.highlightTileAtWorldCoordinates(leftX(), topY(), level.getTileDisplaySize());
-		screen.highlightTileAtWorldCoordinates(leftX(), bottomY(), level.getTileDisplaySize());
-		screen.highlightTileAtWorldCoordinates(rightX(), topY(), level.getTileDisplaySize());
-		screen.highlightTileAtWorldCoordinates(rightX(), bottomY(), level.getTileDisplaySize());
+		if (debug) {
+			screen.highlightTileAtWorldCoordinates(leftX(), topY(),
+					level.getTileDisplaySize());
+			screen.highlightTileAtWorldCoordinates(leftX(), bottomY(),
+					level.getTileDisplaySize());
+			screen.highlightTileAtWorldCoordinates(rightX(), topY(),
+					level.getTileDisplaySize());
+			screen.highlightTileAtWorldCoordinates(rightX(), bottomY(),
+					level.getTileDisplaySize());
+		}
 
 		// if (username != null) {
 		// Font.render(username, screen, xOffset - ((username.length() - 1) / 2 *
