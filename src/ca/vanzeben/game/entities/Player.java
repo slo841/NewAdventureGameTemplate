@@ -2,7 +2,6 @@ package ca.vanzeben.game.entities;
 
 import ca.vanzeben.game.Game;
 import ca.vanzeben.game.InputHandler;
-import ca.vanzeben.game.gfx.Colours;
 import ca.vanzeben.game.gfx.Font;
 import ca.vanzeben.game.gfx.Screen;
 import ca.vanzeben.game.gfx.SpriteSheet;
@@ -218,18 +217,17 @@ public class Player {
 		int dy = y;
 
 		if (tickCount % 60 < 15) {
-			screen.render(dx, dy, sheet, 0, 0, 0, Screen.MirrorDirection.NONE, 1);
+			screen.render(dx, dy, sheet, 0, 0, Screen.MirrorDirection.NONE, 1);
 		} else if (15 <= tickCount % 60 && tickCount % 60 < 30) {
-			screen.render(dx, dy, sheet, 0, 1, 0, Screen.MirrorDirection.NONE, 1);
+			screen.render(dx, dy, sheet, 0, 1, Screen.MirrorDirection.NONE, 1);
 		} else if (30 <= tickCount % 60 && tickCount % 60 < 45) {
-			screen.render(dx, dy, sheet, 0, 2, 0, Screen.MirrorDirection.NONE, 1);
+			screen.render(dx, dy, sheet, 0, 2, Screen.MirrorDirection.NONE, 1);
 		} else {
-			screen.render(dx, dy, sheet, 0, 3, 0, Screen.MirrorDirection.NONE, 1);
+			screen.render(dx, dy, sheet, 0, 3, Screen.MirrorDirection.NONE, 1);
 		}
 
 		Font.render("" + x + ", " + y, screen,
-				dx - ((username.length() - 1) / 2 * 8), dy - 10,
-				Colours.get(-1, -1, -1, 555), 1);
+				dx - ((username.length() - 1) / 2 * 8), dy - 10, 1);
 
 		// *** debug
 		if (debug) {

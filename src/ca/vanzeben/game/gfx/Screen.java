@@ -110,7 +110,7 @@ public class Screen {
 	 * @param scale
 	 */
 	public void render(int xPos, int yPos, SpriteSheet sheet, int tileRow,
-			int tileCol, int colour, MirrorDirection mirrorDir, int scale) {
+			int tileCol, MirrorDirection mirrorDir, int scale) {
 		if (graphicsContext == null) {
 			System.err.println(
 					"Graphics context is null. Canvas object for Game must call setGraphicsContext( getBufferStrategy().getDrawGraphics() );");
@@ -181,10 +181,9 @@ public class Screen {
 		// }
 	}
 
-	public void render(int xPos, int yPos, SpriteSheet sheet, int tileId,
-			int colour, MirrorDirection mirrorDir, int scale) {
+	public void render(int xPos, int yPos, SpriteSheet sheet, int tileId, MirrorDirection mirrorDir, int scale) {
 		render(xPos, yPos, sheet, tileId / sheet.getNumSpritesWidth(),
-				tileId % sheet.getNumSpritesWidth(), colour, mirrorDir, scale);
+				tileId % sheet.getNumSpritesWidth(), mirrorDir, scale);
 	}
 
 	/**
@@ -256,23 +255,20 @@ public class Screen {
 		for (int dx = 0; dx < this.width; dx += increment) {
 			int worldX = (x + dx);
 
-			Font.render("" + worldX, this, worldX, y + 10,
-					Colours.get(-1, -1, -1, 555), 1);
+			Font.render("" + worldX, this, worldX, y + 10, 1);
 		}
 
 		for (int dy = 0; dy < this.height; dy += increment) {
 			int worldY = (y + dy);
 
-			Font.render("" + worldY, this, x + 10, worldY,
-					Colours.get(-1, -1, -1, 555), 1);
+			Font.render("" + worldY, this, x + 10, worldY, 1);
 		}
 	}
 
 	public void displayMouseCoordinatesAtMouse() {
 		this.graphicsContext.drawRect(mouseX, mouseY, 3, 3);
 		Font.render("" + mouseX + ", " + mouseY, this,
-				screenXCoordToWorldCoord(mouseX), screenYCoordToWorldCoord(mouseY - 10),
-				Colours.get(-1, -1, -1, 555), 1);
+				screenXCoordToWorldCoord(mouseX), screenYCoordToWorldCoord(mouseY - 10), 1);
 	}
 
 	public int worldXCoordToScreenCoord(int wx) {
