@@ -5,6 +5,7 @@ import java.awt.Graphics;
 import java.awt.image.BufferedImage;
 import java.awt.image.DataBufferInt;
 
+import ca.vanzeben.game.Game;
 import ca.vanzeben.game.level.Level;
 
 /***
@@ -52,6 +53,8 @@ public class Screen {
 	public int width;
 	public int height;
 
+	private int mouseX, mouseY;
+
 	private Graphics graphicsContext = null; // set by setGraphicsContext();
 
 	public Screen(int width, int height) {
@@ -67,7 +70,12 @@ public class Screen {
 	 * @param tx
 	 * @param ty
 	 */
-	public void highlightTile(int tx, int ty, int tileSize) {
+	public void highlightTileAtWorldCoordinates(int tx, int ty, int tileSize) {
+		if (graphicsContext == null) {
+			System.err.println("Graphics context is null in highlightTile()");
+			return;
+		}
+
 		int dx = (tx / tileSize) * tileSize;
 		int dy = (ty / tileSize) * tileSize;
 
@@ -243,17 +251,62 @@ public class Screen {
 	}
 
 	public void displayPixelScale(int increment) {
-		System.out.println("hey");
+
 		for (int dx = 0; dx < this.width; dx += increment) {
 			int worldX = (x + dx);
-			
-			Font.render("" + worldX, this, worldX, y + 10, Colours.get(-1, -1, -1, 555), 1);
+
+			Font.render("" + worldX, this, worldX, y + 10,
+					Colours.get(-1, -1, -1, 555), 1);
 		}
 
 		for (int dy = 0; dy < this.height; dy += increment) {
 			int worldY = (y + dy);
-			
-			Font.render("" + worldY, this, x + 10, worldY, Colours.get(-1, -1, -1, 555), 1);
+
+			Font.render("" + worldY, this, x + 10, worldY,
+					Colours.get(-1, -1, -1, 555), 1);
 		}
+	}
+
+	public void displayMouseCoordinatesAtMouse() {
+		this.graphicsContext.drawRect(mouseX, mouseY, 3, 3);
+		Font.render("" + mouseX + ", " + mouseY, this,
+				screenXCoordToWorldCoord(mouseX), screenYCoordToWorldCoord(mouseY - 10),
+				Colours.get(-1, -1, -1, 555), 1);
+	}
+
+	public int worldXCoordToScreenCoord(int wx) {
+		return wx - x;
+	}
+
+	public int screenXCoordToWorldCoord(int sx) {
+		return (x + sx);
+	}
+
+	public int worldYCoordToScreenCoord(int wy) {
+		return wy - y;
+	}
+
+	public int screenYCoordToWorldCoord(int sy) {
+		return (y + sy);
+	}
+
+	public void highlightTileAtScreenCoordinates(int sx, int sy,
+			int tileDisplaySize) {
+
+		this.highlightTileAtWorldCoordinates(screenXCoordToWorldCoord(sx),
+				screenYCoordToWorldCoord(sy), tileDisplaySize);
+	}
+
+	public int getMouseX() {
+		return mouseX;
+	}
+
+	public int getMouseY() {
+		return mouseY;
+	}
+
+	public void setMouseCoordinates(int x2, int y2) {
+		mouseX = x2;
+		mouseY = y2;
 	}
 }

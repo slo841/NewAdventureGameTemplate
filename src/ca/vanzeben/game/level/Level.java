@@ -130,7 +130,7 @@ public class Level {
 		int sourcex = x / this.levelScaleFactor;
 		int sourcey = y / this.levelScaleFactor;
 		
-		Game.getScreen().highlightTile(x, y, levelScaleFactor);
+		Game.getScreen().highlightTileAtWorldCoordinates(x, y, levelScaleFactor);
 		
 		return Tile.tiles[tiles[sourcex + sourcey * levelImageWidth]];
 	}

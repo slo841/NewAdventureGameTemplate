@@ -27,6 +27,7 @@ public class Game extends Canvas implements Runnable {
 	public static final Dimension DIMENSIONS = new Dimension(SCREEN_WIDTH * SCALE, SCREEN_HEIGHT * SCALE);
 	private static Game game;
 	private static Screen screen;
+	private static Level level;
 	
 	public JFrame frame;
 
@@ -43,7 +44,6 @@ public class Game extends Canvas implements Runnable {
 
 	public InputHandler input;
 	public WindowHandler windowHandler;
-	public Level level;
 	public Player player;
 
 	public boolean debug = true;
@@ -174,6 +174,8 @@ public class Game extends Canvas implements Runnable {
 		level.renderTiles(screen);
 		level.renderEntities(screen);
 
+		screen.highlightTileAtScreenCoordinates(screen.getMouseX(), screen.getMouseY(), level.getTileDisplaySize());
+		screen.displayMouseCoordinatesAtMouse();
 		screen.displayPixelScale(50);
 		
 		// *****************************************************************************************
@@ -207,5 +209,9 @@ public class Game extends Canvas implements Runnable {
 
 	public static enum DebugLevel {
 		INFO, WARNING, SEVERE;
+	}
+
+	public static Level getLevel() {
+		return level;
 	}
 }

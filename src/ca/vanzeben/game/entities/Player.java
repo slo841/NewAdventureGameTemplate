@@ -231,10 +231,10 @@ public class Player {
 				Colours.get(-1, -1, -1, 555), 1);
 
 		// *** debug
-		screen.highlightTile(leftX(), topY(), level.getTileDisplaySize());
-		screen.highlightTile(leftX(), bottomY(), level.getTileDisplaySize());
-		screen.highlightTile(rightX(), topY(), level.getTileDisplaySize());
-		screen.highlightTile(rightX(), bottomY(), level.getTileDisplaySize());
+		screen.highlightTileAtWorldCoordinates(leftX(), topY(), level.getTileDisplaySize());
+		screen.highlightTileAtWorldCoordinates(leftX(), bottomY(), level.getTileDisplaySize());
+		screen.highlightTileAtWorldCoordinates(rightX(), topY(), level.getTileDisplaySize());
+		screen.highlightTileAtWorldCoordinates(rightX(), bottomY(), level.getTileDisplaySize());
 
 		// if (username != null) {
 		// Font.render(username, screen, xOffset - ((username.length() - 1) / 2 *
@@ -264,39 +264,10 @@ public class Player {
 		Tile lowerRightTile = level.getTileTypeAtWorldCoordinates(rightX() + dx,
 				bottomY() + dy);
 
-		System.out.println("Solid? UL: " + upperLeftTile.isSolid() + " UR: "
-				+ upperRightTile.isSolid() + " LL: " + lowerLeftTile.isSolid() + " LR: "
-				+ lowerRightTile.isSolid());
-
 		if (upperLeftTile.isSolid() || lowerLeftTile.isSolid()
 				|| upperRightTile.isSolid() || lowerRightTile.isSolid())
 			return true;
 		return false;
-
-		// int xMin = 0;
-		// int xMax = 7;
-		// int yMin = 3;
-		// int yMax = 7;
-		// for (int x = xMin; x < xMax; x++) {
-		// if (isSolidTile(xa, ya, x, yMin)) {
-		// return true;
-		// }
-		// }
-		// for (int x = xMin; x < xMax; x++) {
-		// if (isSolidTile(xa, ya, x, yMax)) {
-		// return true;
-		// }
-		// }
-		// for (int y = yMin; y < yMax; y++) {
-		// if (isSolidTile(xa, ya, xMin, y)) {
-		// return true;
-		// }
-		// }
-		// for (int y = yMin; y < yMax; y++) {
-		// if (isSolidTile(xa, ya, xMax, y)) {
-		// return true;
-		// }
-		// }
 	}
 
 	public String getUsername() {
