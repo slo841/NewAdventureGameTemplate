@@ -1,8 +1,11 @@
 package ca.vanzeben.game.gfx;
 
+import java.awt.Color;
 import java.awt.Graphics;
 import java.awt.image.BufferedImage;
 import java.awt.image.DataBufferInt;
+
+import ca.vanzeben.game.level.Level;
 
 /***
  * Represents the graphics for the screen (what is actually displayed in the
@@ -43,7 +46,7 @@ public class Screen {
 	public int[] nextFramePixels;
 
 	public int x = 0; // Number of pixels to offset screen by (within the
-													// level image)
+										// level image)
 	public int y = 0;
 
 	public int width;
@@ -56,6 +59,29 @@ public class Screen {
 		this.height = height;
 
 		nextFramePixels = new int[width * height];
+	}
+
+	/***
+	 * Highlights the tile at world coordinates x, y
+	 * 
+	 * @param tx
+	 * @param ty
+	 */
+	public void highlightTile(int tx, int ty, int tileSize) {
+		int dx = (tx / tileSize) * tileSize;
+		int dy = (ty / tileSize) * tileSize;
+
+		dx -= x; // change world coordinates (xPos, yPos) to screen coordinates
+		dy -= y;
+
+		int destx1 = dx;
+		int desty1 = dy;
+		int destx2 = destx1 + tileSize;
+		int desty2 = desty1 + tileSize;
+
+		this.graphicsContext.setColor(Color.YELLOW);
+		this.graphicsContext.drawRect(destx1, desty1, tileSize, tileSize);
+		this.graphicsContext.setColor(Color.BLACK);
 	}
 
 	/***
@@ -82,7 +108,7 @@ public class Screen {
 					"Graphics context is null. Canvas object for Game must call setGraphicsContext( getBufferStrategy().getDrawGraphics() );");
 		}
 		xPos -= x; // change world coordinates (xPos, yPos) to screen
-											// coordinates
+								// coordinates
 		yPos -= y;
 
 		int sourcex1 = tileCol * sheet.getSpriteWidth();
@@ -97,6 +123,9 @@ public class Screen {
 
 		this.graphicsContext.drawImage(sheet.getImage(), destx1, desty1, destx2,
 				desty2, sourcex1, sourcey1, sourcex2, sourcey2, null);
+
+		this.graphicsContext.drawRect(destx1, desty1,
+				sheet.getSpriteWidth() * scale, sheet.getSpriteHeight() * scale);
 
 		// boolean mirrorX = (mirrorDir == MirrorDirection.BOTH
 		// || mirrorDir == MirrorDirection.X);
@@ -181,22 +210,24 @@ public class Screen {
 
 	/**
 	 * Return world y-coordinate of upper left of screen.
+	 * 
 	 * @return
 	 */
 	public int getY() {
 		return this.y;
 	}
-	
+
 	public int getTopY() {
 		return getY();
 	}
-	
+
 	public int getBottomY() {
 		return getY() + this.height;
 	}
-	
+
 	/**
 	 * Return world x-coordinate of upper left of screen.
+	 * 
 	 * @return
 	 */
 	public int getX() {
@@ -206,8 +237,23 @@ public class Screen {
 	public int getLeftX() {
 		return getX();
 	}
-	
+
 	public int getRightX() {
 		return getX() + this.width;
+	}
+
+	public void displayPixelScale(int increment) {
+		System.out.println("hey");
+		for (int dx = 0; dx < this.width; dx += increment) {
+			int worldX = (x + dx);
+			
+			Font.render("" + worldX, this, worldX, y + 10, Colours.get(-1, -1, -1, 555), 1);
+		}
+
+		for (int dy = 0; dy < this.height; dy += increment) {
+			int worldY = (y + dy);
+			
+			Font.render("" + worldY, this, x + 10, worldY, Colours.get(-1, -1, -1, 555), 1);
+		}
 	}
 }

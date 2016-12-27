@@ -14,17 +14,20 @@ import ca.vanzeben.game.entities.Player;
 import ca.vanzeben.game.gfx.Screen;
 import ca.vanzeben.game.gfx.SpriteSheet;
 import ca.vanzeben.game.level.Level;
+import ca.vanzeben.game.level.tiles.Tile;
 
 public class Game extends Canvas implements Runnable {
 	private static final long serialVersionUID = 1L;
 
-	public static final int SCREEN_WIDTH = 160*3;
+	public static final int SCREEN_WIDTH = 240*2;
 	public static final int SCREEN_HEIGHT = SCREEN_WIDTH / 12 * 9;
 	public static final int SCALE = 1;
 
 	public static final String NAME = "Game";
 	public static final Dimension DIMENSIONS = new Dimension(SCREEN_WIDTH * SCALE, SCREEN_HEIGHT * SCALE);
-	public static Game game;
+	private static Game game;
+	private static Screen screen;
+	
 	public JFrame frame;
 
 	private Thread thread;
@@ -33,8 +36,6 @@ public class Game extends Canvas implements Runnable {
 	public int tickCount = 0;
 
 	// private int[] colours = new int[6 * 6 * 6];
-
-	private Screen screen;
 
 	public SpriteSheet characterSheet = new SpriteSheet("characters",
 			"/entities/spritestrip.png", 1, 6);
@@ -70,6 +71,8 @@ public class Game extends Canvas implements Runnable {
 		screen = new Screen(SCREEN_WIDTH, SCREEN_HEIGHT);
 		input = new InputHandler(this);
 		level = new Level("/levels/water_test_level.png");
+		level.setTileAt(3, 3, Tile.STONE);
+		
 		player = new Player(level, 100, 100, input,
 				JOptionPane.showInputDialog(this, "Please enter a username"),
 				characterSheet);
@@ -161,7 +164,7 @@ public class Game extends Canvas implements Runnable {
 		screenX = Math.max(0, screenX);		// if < 0 set to 0
 		screenY = Math.max(0, screenY);
 	  screenX = Math.min((level.getLevelWidth() - screen.width), screenX);		// if > max, set to max
-		screenY = Math.min((level.getLevelHeight() - screen.height),screenY);		// if > max, set to max
+		screenY = Math.min((level.getLevelHeight() - screen.height), screenY);		// if > max, set to max
 		
 		screen.setScreenPosition(screenX, screenY);
 
@@ -171,6 +174,8 @@ public class Game extends Canvas implements Runnable {
 		level.renderTiles(screen);
 		level.renderEntities(screen);
 
+		screen.displayPixelScale(50);
+		
 		// *****************************************************************************************
 		// Dispose of current context and show the rendered buffer
 
@@ -178,12 +183,8 @@ public class Game extends Canvas implements Runnable {
 		bs.show();
 	}
 
-	public static long fact(int n) {
-		if (n <= 1) {
-			return 1;
-		} else {
-			return n * fact(n - 1);
-		}
+	public static Screen getScreen() {
+		return screen;
 	}
 
 	public void debug(DebugLevel level, String msg) {

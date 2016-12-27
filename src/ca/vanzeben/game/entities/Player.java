@@ -15,14 +15,12 @@ public class Player {
 	private Level level;
 
 	protected String name;
-	protected int speed = 5;
+	protected int speed = 3;
 	protected int numSteps = 0;
 	protected boolean isMoving;
 	protected int movingDir = 1;
 
 	private InputHandler input;
-	private int colour = Colours.get(-1, 111, 145, 543);
-	private int scale = 1;
 	protected boolean isSwimming = false;
 	private int tickCount = 0;
 	private String username;
@@ -70,8 +68,8 @@ public class Player {
 		}
 	}
 
-	public Tile getCurrentTile() {
-		return this.level.getTileAtWorldCoordinates(x, y);
+	public Tile getCurrentTileType() {
+		return this.level.getTileTypeAtWorldCoordinates(x, y);
 	}
 
 	public int x() {
@@ -151,9 +149,9 @@ public class Player {
 				xDir++;
 			}
 		}
-		
+
 		if (xDir != 0 || yDir != 0) {
-			move(xDir*speed, yDir*speed);
+			move(xDir * speed, yDir * speed);
 			isMoving = true;
 		} else {
 			isMoving = false;
@@ -180,8 +178,8 @@ public class Player {
 		// flipTop = (movingDir - 1) % 2;
 		// }
 
-		int xOffset = x;
-		int yOffset = y;
+		// int xOffset = x;
+		// int yOffset = y;
 
 		// if (isSwimming) {
 		// int waterColour = 0;
@@ -215,19 +213,28 @@ public class Player {
 		// flipBottom, scale);
 		// }
 
+		int dx = this.centerX();
+		int dy = this.centerY();
+
 		if (tickCount % 60 < 15) {
-			screen.render(x, y, sheet, 0, 0, 0, Screen.MirrorDirection.NONE, 3);
+			screen.render(dx, dy, sheet, 0, 0, 0, Screen.MirrorDirection.NONE, 1);
 		} else if (15 <= tickCount % 60 && tickCount % 60 < 30) {
-			screen.render(x, y, sheet, 0, 1, 0, Screen.MirrorDirection.NONE, 3);
+			screen.render(dx, dy, sheet, 0, 1, 0, Screen.MirrorDirection.NONE, 1);
 		} else if (30 <= tickCount % 60 && tickCount % 60 < 45) {
-			screen.render(x, y, sheet, 0, 2, 0, Screen.MirrorDirection.NONE, 3);
+			screen.render(dx, dy, sheet, 0, 2, 0, Screen.MirrorDirection.NONE, 1);
 		} else {
-			screen.render(x, y, sheet, 0, 3, 0, Screen.MirrorDirection.NONE, 3);
+			screen.render(dx, dy, sheet, 0, 3, 0, Screen.MirrorDirection.NONE, 1);
 		}
 
 		Font.render("" + x + ", " + y, screen,
-				xOffset - ((username.length() - 1) / 2 * 8), yOffset - 10,
+				dx - ((username.length() - 1) / 2 * 8), dy - 10,
 				Colours.get(-1, -1, -1, 555), 1);
+
+		// *** debug
+		screen.highlightTile(leftX(), topY(), level.getTileDisplaySize());
+		screen.highlightTile(leftX(), bottomY(), level.getTileDisplaySize());
+		screen.highlightTile(rightX(), topY(), level.getTileDisplaySize());
+		screen.highlightTile(rightX(), bottomY(), level.getTileDisplaySize());
 
 		// if (username != null) {
 		// Font.render(username, screen, xOffset - ((username.length() - 1) / 2 *
@@ -248,14 +255,18 @@ public class Player {
 		// Calculate coordinates of all 4 corners of player sprite
 		// Check each for collision
 
-		Tile upperLeftTile = level.getTileAtWorldCoordinates(leftX() + dx,
+		Tile upperLeftTile = level.getTileTypeAtWorldCoordinates(leftX() + dx,
 				topY() + dy);
-		Tile lowerLeftTile = level.getTileAtWorldCoordinates(leftX() + dx,
+		Tile lowerLeftTile = level.getTileTypeAtWorldCoordinates(leftX() + dx,
 				bottomY() + dy);
-		Tile upperRightTile = level.getTileAtWorldCoordinates(rightX() + dx,
+		Tile upperRightTile = level.getTileTypeAtWorldCoordinates(rightX() + dx,
 				topY() + dy);
-		Tile lowerRightTile = level.getTileAtWorldCoordinates(rightX() + dx,
+		Tile lowerRightTile = level.getTileTypeAtWorldCoordinates(rightX() + dx,
 				bottomY() + dy);
+
+		System.out.println("Solid? UL: " + upperLeftTile.isSolid() + " UR: "
+				+ upperRightTile.isSolid() + " LL: " + lowerLeftTile.isSolid() + " LR: "
+				+ lowerRightTile.isSolid());
 
 		if (upperLeftTile.isSolid() || lowerLeftTile.isSolid()
 				|| upperRightTile.isSolid() || lowerRightTile.isSolid())

@@ -8,6 +8,7 @@ import java.util.List;
 
 import javax.imageio.ImageIO;
 
+import ca.vanzeben.game.Game;
 import ca.vanzeben.game.entities.Player;
 import ca.vanzeben.game.gfx.Screen;
 import ca.vanzeben.game.level.tiles.Tile;
@@ -18,11 +19,12 @@ public class Level {
 	
 	public static final int levelScaleFactor = tileSize*scaleFactor; // each pixel in game ends up
 																								 									 // being this large
+	
 	private byte[] tiles;
 	private int levelImageWidth;
 	private int levelImageHeight;
 	private String imagePath;
-	private BufferedImage image;
+	private BufferedImage levelSourceimage;
 
 	private Player player;
 
@@ -36,13 +38,14 @@ public class Level {
 			tiles = new byte[levelImageWidth * levelImageHeight];
 			this.generateLevel();
 		}
+
 	}
 
 	private void loadLevelFromFile() {
 		try {
-			this.image = ImageIO.read(Level.class.getResource(this.imagePath));
-			this.levelImageWidth = this.image.getWidth();
-			this.levelImageHeight = this.image.getHeight();
+			this.levelSourceimage = ImageIO.read(Level.class.getResource(this.imagePath));
+			this.levelImageWidth = this.levelSourceimage.getWidth();
+			this.levelImageHeight = this.levelSourceimage.getHeight();
 			tiles = new byte[levelImageWidth * levelImageHeight];
 			this.loadTiles();
 		} catch (IOException e) {
@@ -51,7 +54,7 @@ public class Level {
 	}
 
 	private void loadTiles() {
-		int[] tileColours = this.image.getRGB(0, 0, levelImageWidth,
+		int[] tileColours = this.levelSourceimage.getRGB(0, 0, levelImageWidth,
 				levelImageHeight, null, 0, levelImageWidth);
 		for (int y = 0; y < levelImageHeight; y++) {
 			for (int x = 0; x < levelImageWidth; x++) {
@@ -69,16 +72,16 @@ public class Level {
 	@SuppressWarnings("unused")
 	private void saveLevelToFile() {
 		try {
-			ImageIO.write(image, "png",
+			ImageIO.write(levelSourceimage, "png",
 					new File(Level.class.getResource(this.imagePath).getFile()));
 		} catch (IOException e) {
 			e.printStackTrace();
 		}
 	}
 
-	public void alterTile(int x, int y, Tile newTile) {
+	public void setTileAt(int x, int y, Tile newTile) {
 		this.tiles[x + y * levelImageWidth] = newTile.getId();
-		image.setRGB(x, y, newTile.getLevelColour());
+		levelSourceimage.setRGB(x, y, newTile.getLevelColour());
 	}
 
 	public void generateLevel() {
@@ -120,12 +123,14 @@ public class Level {
 		player.render(screen);
 	}
 
-	public Tile getTileAtWorldCoordinates(int x, int y) {
+	public Tile getTileTypeAtWorldCoordinates(int x, int y) {
 		if (0 > x || x >= this.getLevelWidth() || 0 > y || y >= this.getLevelHeight())
 			return Tile.VOID;
 		
 		int sourcex = x / this.levelScaleFactor;
 		int sourcey = y / this.levelScaleFactor;
+		
+		Game.getScreen().highlightTile(x, y, levelScaleFactor);
 		
 		return Tile.tiles[tiles[sourcex + sourcey * levelImageWidth]];
 	}
@@ -179,6 +184,10 @@ public class Level {
 	 * @return
 	 */
 	public int getLevelHeight() {
-		return getLevelImageWidth() * this.levelScaleFactor;
+		return getLevelImageHeight() * this.levelScaleFactor;
+	}
+
+	public int getTileDisplaySize() {
+		return this.levelScaleFactor;
 	}
 }
