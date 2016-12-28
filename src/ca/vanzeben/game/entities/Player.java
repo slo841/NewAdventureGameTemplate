@@ -120,17 +120,6 @@ public class Player {
 		return movingDir;
 	}
 
-	public void setNumSteps(int numSteps) {
-		this.numSteps = numSteps;
-	}
-
-	public void setMoving(boolean isMoving) {
-		this.isMoving = isMoving;
-	}
-
-	public void setMovingDir(int movingDir) {
-		this.movingDir = movingDir;
-	}
 
 	public void tick() {
 		int xDir = 0;
@@ -175,13 +164,13 @@ public class Player {
 
 	private void renderAnimatedStanding(Screen screen) {
 		if (tickCount % 60 < 15) {
-			screen.render(x, y, sheet, 0, 0, Screen.MirrorDirection.NONE);
+			screen.render(x, y, sheet, 0, 0, Screen.MirrorDirection.BOTH);
 		} else if (15 <= tickCount % 60 && tickCount % 60 < 30) {
-			screen.render(x, y, sheet, 0, 1, Screen.MirrorDirection.NONE);
+			screen.render(x, y, sheet, 0, 1, Screen.MirrorDirection.BOTH);
 		} else if (30 <= tickCount % 60 && tickCount % 60 < 45) {
-			screen.render(x, y, sheet, 0, 2, Screen.MirrorDirection.NONE);
+			screen.render(x, y, sheet, 0, 2, Screen.MirrorDirection.BOTH);
 		} else {
-			screen.render(x, y, sheet, 0, 3, Screen.MirrorDirection.NONE);
+			screen.render(x, y, sheet, 0, 3, Screen.MirrorDirection.BOTH);
 		}
 	}
 

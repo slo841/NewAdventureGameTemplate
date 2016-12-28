@@ -146,26 +146,16 @@ public class Game extends Canvas implements Runnable {
 		screen.reset(); // You must call this BEFORE you render
 																	// anything!
 
-		// Calculate offset for the display so it's centered on the player
+		// Set screen position centered on player
 		int screenX = player.x() - (screen.getWidth() / 2);
 		int screenY = player.y() - (screen.getHeight() / 2);
 
 		// Limit the screen position
 		screenX = Math.max(0, screenX); // if < 0 set to 0
 		screenY = Math.max(0, screenY);
-		screenX = Math.min((level.getLevelWidth() - screen.getWidth()), screenX); // if
-																																							// >
-		// max,
-		// set
-		// to
-		// max
-		screenY = Math.min((level.getLevelHeight() - screen.getHeight()), screenY); // if
-		// >
-		// max,
-		// set
-		// to
-		// max
-
+		screenX = Math.min((level.getLevelWidth() - screen.getWidth()), screenX);
+		screenY = Math.min((level.getLevelHeight() - screen.getHeight()), screenY); 
+		
 		screen.setScreenPosition(screenX, screenY);
 
 		// *****************************************************************************************

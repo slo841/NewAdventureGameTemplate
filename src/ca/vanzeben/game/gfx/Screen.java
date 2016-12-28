@@ -3,6 +3,8 @@ package ca.vanzeben.game.gfx;
 import java.awt.Color;
 import java.awt.Graphics;
 import java.awt.Image;
+import java.awt.geom.AffineTransform;
+import java.awt.image.AffineTransformOp;
 import java.awt.image.BufferedImage;
 import java.awt.image.DataBufferInt;
 
@@ -115,16 +117,18 @@ public class Screen {
 
 		int sourcex1 = tileCol * sheet.getSpriteWidth();
 		int sourcey1 = tileRow * sheet.getSpriteHeight();
-		int sourcex2 = sourcex1 + sheet.getSpriteWidth();
-		int sourcey2 = sourcey1 + sheet.getSpriteHeight();
 
 		int destx1 = xPos;
 		int desty1 = yPos;
-		int destx2 = destx1 + displayWidth;
-		int desty2 = desty1 + displayHeight;
 
-		this.graphicsContext.drawImage(sheet.getImage(), destx1, desty1, destx2,
-				desty2, sourcex1, sourcey1, sourcex2, sourcey2, null);
+		BufferedImage tile = sheet.getImage().getSubimage(sourcex1, sourcey1,
+				sheet.getSpriteWidth(), sheet.getSpriteHeight());
+
+		double horizontalScale = displayWidth / (double) sheet.getSpriteWidth();
+		double verticalScale = displayHeight / (double) sheet.getSpriteHeight();
+		tile = processTile(tile, mirrorDir, horizontalScale, verticalScale);
+
+		this.graphicsContext.drawImage(tile, destx1, desty1, null);
 
 		// ****** DEBUG ******
 		if (debug) {
@@ -132,7 +136,46 @@ public class Screen {
 					displayHeight);
 		}
 
-		// TODO: mirroring?
+	}
+
+	// Scale and mirror the tile before display
+	private BufferedImage processTile(BufferedImage tile, MirrorDirection mirrorDir,
+			double horizontalScale, double verticalScale) {
+		
+		if (mirrorDir == MirrorDirection.X) {
+			horizontalScale *= -1;
+			
+			AffineTransform tx = AffineTransform.getScaleInstance(horizontalScale, verticalScale);
+			tx.translate(-tile.getWidth(null), 0);
+			AffineTransformOp op = new AffineTransformOp(tx,
+					AffineTransformOp.TYPE_NEAREST_NEIGHBOR);
+			
+			return op.filter(tile, null);
+		} else if (mirrorDir == MirrorDirection.Y) {
+			verticalScale *= -1;
+			
+			AffineTransform tx = AffineTransform.getScaleInstance(horizontalScale, verticalScale);
+			tx.translate(0, -tile.getHeight(null));
+			AffineTransformOp op = new AffineTransformOp(tx,
+					AffineTransformOp.TYPE_NEAREST_NEIGHBOR);
+			
+			return op.filter(tile, null);
+		} else if (mirrorDir == MirrorDirection.BOTH) {
+			horizontalScale *= -1;
+			verticalScale *= -1;
+			
+			AffineTransform tx = AffineTransform.getScaleInstance(horizontalScale, verticalScale);
+			tx.translate(-tile.getWidth(null), -tile.getHeight(null));
+			AffineTransformOp op = new AffineTransformOp(tx,
+					AffineTransformOp.TYPE_NEAREST_NEIGHBOR);
+			return op.filter(tile, null);
+		}
+		
+		AffineTransform tx = AffineTransform.getScaleInstance(horizontalScale, verticalScale);
+		AffineTransformOp op = new AffineTransformOp(tx,
+				AffineTransformOp.TYPE_NEAREST_NEIGHBOR);
+		
+		return op.filter(tile, null);
 	}
 
 	/***
@@ -161,14 +204,17 @@ public class Screen {
 				displayHeight);
 	}
 
-  public void renderTextAtWorldCoordinates(String msg, Font font, int x, int y, int scale) {
-  	font.render(msg, this, x, y, scale);
-  }
-  
-  public void renderTextAtScreenCoordinates(String msg, Font font, int x, int y, int scale) {
-  	font.render(msg, this, screenXCoordToWorldCoord(x), screenYCoordToWorldCoord(y), scale);
-  }
-	
+	public void renderTextAtWorldCoordinates(String msg, Font font, int x, int y,
+			int scale) {
+		font.render(msg, this, x, y, scale);
+	}
+
+	public void renderTextAtScreenCoordinates(String msg, Font font, int x, int y,
+			int scale) {
+		font.render(msg, this, screenXCoordToWorldCoord(x),
+				screenYCoordToWorldCoord(y), scale);
+	}
+
 	/**
 	 * Sets the screen position in the global (x, y) coordinate system.
 	 * 
