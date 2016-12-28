@@ -120,10 +120,6 @@ public class SpriteSheet {
 		return pixels;
 	}
 
-	public void setPixels(int[] pixels) {
-		this.pixels = pixels;
-	}
-
 	public int getSpriteHeight() {
 		return this.spriteHeight;
 	}

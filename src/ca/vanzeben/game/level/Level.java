@@ -14,10 +14,10 @@ import ca.vanzeben.game.gfx.Screen;
 import ca.vanzeben.game.level.tiles.Tile;
 
 public class Level {
-	private static final int tileSize = 30;		// from sprite sheet
-	private static final int scaleFactor = 2; // how much to scale the tiles up
+	private static final int originalTileSize = 30;		// from sprite sheet
+	private static final int scaleFactor = 2;         // how much to scale the tiles up for display
 	
-	public static final int levelScaleFactor = tileSize*scaleFactor; // each pixel in game ends up
+	public static final int tileSize = originalTileSize*scaleFactor; // each pixel in game ends up
 																								 									 // being this large
 	
 	private int[][] levelTileIds;
@@ -96,9 +96,14 @@ public class Level {
 		}
 	}
 
+	/***
+	 * Run tick() on everything in this level to prepare for next game frame.
+	 */
 	public void tick() {
+		// Run tick() for all entities
 		player.tick();
 
+		// Run tick() for all tiles
 		for (Tile t : Tile.tiles) {
 			if (t == null) {
 				break;
@@ -109,10 +114,10 @@ public class Level {
 
 	public void renderTiles(Screen screen) {
 		for (int tileY = screen.getTopY()
-				/ levelScaleFactor; tileY < screen.getBottomY() / levelScaleFactor + 1; tileY++) {
-			for (int tileX = (screen.getLeftX() / levelScaleFactor); tileX < screen.getRightX() / levelScaleFactor + 1; tileX++) {
-				getTileAtSourceImageCoordinates(tileX, tileY).render(screen, this, tileX * levelScaleFactor,
-						tileY * levelScaleFactor, scaleFactor);
+				/ tileSize; tileY < screen.getBottomY() / tileSize + 1; tileY++) {
+			for (int tileX = (screen.getLeftX() / tileSize); tileX < screen.getRightX() / tileSize + 1; tileX++) {
+				getTileAtSourceImageCoordinates(tileX, tileY).render(screen, this, tileX * tileSize,
+						tileY * tileSize, tileSize, tileSize);
 			}
 		}
 	}
@@ -125,10 +130,10 @@ public class Level {
 		if (0 > x || x >= this.getLevelWidth() || 0 > y || y >= this.getLevelHeight())
 			return Tile.VOID;
 		
-		int sourcex = x / this.levelScaleFactor;
-		int sourcey = y / this.levelScaleFactor;
+		int sourcex = x / this.tileSize;
+		int sourcey = y / this.tileSize;
 		
-		Game.getScreen().highlightTileAtWorldCoordinates(x, y, levelScaleFactor);
+		Game.getScreen().highlightTileAtWorldCoordinates(x, y, tileSize);
 		
 		int tileId = levelTileIds[sourcey][sourcex];
 		return Tile.tiles.get(tileId);
@@ -174,7 +179,7 @@ public class Level {
 	 * @return
 	 */
 	public int getLevelWidth() {
-		return getLevelImageWidth() * this.levelScaleFactor;
+		return getLevelImageWidth() * this.tileSize;
 	}
 
 	/***
@@ -185,10 +190,10 @@ public class Level {
 	 * @return
 	 */
 	public int getLevelHeight() {
-		return getLevelImageHeight() * this.levelScaleFactor;
+		return getLevelImageHeight() * this.tileSize;
 	}
 
 	public int getTileDisplaySize() {
-		return this.levelScaleFactor;
+		return this.tileSize;
 	}
 }
