@@ -15,7 +15,7 @@ public class Player {
 	private Level level;
 
 	protected String name;
-	protected int speed = 3;
+	protected int speed = 15;
 	protected int numSteps = 0;
 	protected boolean isMoving;
 	protected int movingDir = 1;

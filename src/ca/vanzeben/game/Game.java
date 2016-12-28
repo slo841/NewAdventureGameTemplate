@@ -26,20 +26,20 @@ public class Game extends Canvas implements Runnable {
 	public static final String NAME = "Game";
 	public static final Dimension DIMENSIONS = new Dimension(SCREEN_WIDTH * SCALE,
 			SCREEN_HEIGHT * SCALE);
+
+	private Thread thread;
+	private WindowHandler windowHandler;
 	private static Game game;
 	private static Screen screen;
 	private static Level level;
-
+	private static InputHandler input;
+	
 	public JFrame frame;
 
-	private Thread thread;
-
-	public boolean running = false;
-	public int tickCount = 0;
-
-	public InputHandler input;
-	public WindowHandler windowHandler;
-	public Player player;
+	private boolean running = false;
+	private int tickCount = 0;
+	
+	private Player player;
 
 	public boolean debug = false;
 	public boolean isApplet = false;
@@ -123,19 +123,26 @@ public class Game extends Canvas implements Runnable {
 		}
 	}
 
+	/***
+	 * Updates the game state once per frame. 
+	 */
 	public void tick() {
 		tickCount++;
 		level.tick();
 	}
 
+	/***
+	 * Render the game
+	 */
 	public void render() {
 		BufferStrategy bs = getBufferStrategy();
 		if (bs == null) {
 			createBufferStrategy(3);
 			return;
 		}
+		
 		Graphics g = bs.getDrawGraphics();
-		screen.setGraphicsContext(g); // You must call this BEFORE you render
+		screen.reset(); // You must call this BEFORE you render
 																	// anything!
 
 		// Calculate offset for the display so it's centered on the player
@@ -176,6 +183,8 @@ public class Game extends Canvas implements Runnable {
 		// *****************************************************************************************
 		// Dispose of current context and show the rendered buffer
 
+		g.drawImage(screen.getImage(), 0, 0, null);
+		
 		g.dispose();
 		bs.show();
 	}
@@ -208,5 +217,9 @@ public class Game extends Canvas implements Runnable {
 
 	public static Level getLevel() {
 		return level;
+	}
+
+	public void setWindowHandler(WindowHandler wh) {
+		this.windowHandler = wh;
 	}
 }

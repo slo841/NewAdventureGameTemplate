@@ -2,6 +2,7 @@ package ca.vanzeben.game.gfx;
 
 import java.awt.Color;
 import java.awt.Graphics;
+import java.awt.Image;
 import java.awt.image.BufferedImage;
 import java.awt.image.DataBufferInt;
 
@@ -53,11 +54,18 @@ public class Screen {
 
 	private int mouseX, mouseY;
 
-	private Graphics graphicsContext = null; // set by setGraphicsContext();
+	private BufferedImage image;
+	private Graphics graphicsContext = null;
 
 	public Screen(int width, int height) {
+		image = new BufferedImage(width, height, BufferedImage.TYPE_INT_RGB);
+		graphicsContext = image.getGraphics();
 		this.width = width;
 		this.height = height;
+	}
+
+	public void reset() {
+		graphicsContext.fillRect(0, 0, width, height);
 	}
 
 	/***
@@ -277,6 +285,10 @@ public class Screen {
 
 	public int getHeight() {
 		return height;
+	}
+
+	public Image getImage() {
+		return this.image;
 	}
 
 }

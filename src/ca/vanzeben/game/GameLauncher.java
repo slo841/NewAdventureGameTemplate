@@ -49,7 +49,7 @@ public class GameLauncher extends Applet {
         game.frame.setLocationRelativeTo(null);
         game.frame.setVisible(true);
 
-        game.windowHandler = new WindowHandler(game);
+        game.setWindowHandler(new WindowHandler(game));
         game.debug = DEBUG;
 
         game.start();
