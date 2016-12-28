@@ -20,7 +20,7 @@ public class Level {
 	public static final int levelScaleFactor = tileSize*scaleFactor; // each pixel in game ends up
 																								 									 // being this large
 	
-	private byte[] tiles;
+	private int[][] tiles;
 	private int levelImageWidth;
 	private int levelImageHeight;
 	private String imagePath;
@@ -35,7 +35,7 @@ public class Level {
 		} else {
 			this.levelImageWidth = 64;
 			this.levelImageHeight = 64;
-			tiles = new byte[levelImageWidth * levelImageHeight];
+			tiles = new int[levelImageHeight][levelImageWidth];
 			this.generateLevel();
 		}
 
@@ -46,7 +46,7 @@ public class Level {
 			this.levelSourceimage = ImageIO.read(Level.class.getResource(this.imagePath));
 			this.levelImageWidth = this.levelSourceimage.getWidth();
 			this.levelImageHeight = this.levelSourceimage.getHeight();
-			tiles = new byte[levelImageWidth * levelImageHeight];
+			tiles = new int[levelImageHeight][levelImageWidth];
 			this.loadTiles();
 		} catch (IOException e) {
 			e.printStackTrace();
@@ -61,7 +61,7 @@ public class Level {
 				tileCheck: for (Tile t : Tile.tiles) {
 					if (t != null
 							&& t.getLevelColour() == tileColours[x + y * levelImageWidth]) {
-						this.tiles[x + y * levelImageWidth] = t.getId();
+						this.tiles[y][x] = t.getId();
 						break tileCheck;
 					}
 				}
@@ -80,7 +80,7 @@ public class Level {
 	}
 
 	public void setTileAt(int x, int y, Tile newTile) {
-		this.tiles[x + y * levelImageWidth] = newTile.getId();
+		this.tiles[y][x] = newTile.getId();
 		levelSourceimage.setRGB(x, y, newTile.getLevelColour());
 	}
 
@@ -88,9 +88,9 @@ public class Level {
 		for (int y = 0; y < levelImageHeight; y++) {
 			for (int x = 0; x < levelImageWidth; x++) {
 				if (x * y % 10 < 7) {
-					tiles[x + y * levelImageWidth] = Tile.GRASS.getId();
+					tiles[y][x] = Tile.GRASS.getId();
 				} else {
-					tiles[x + y * levelImageWidth] = Tile.STONE.getId();
+					tiles[y][x] = Tile.STONE.getId();
 				}
 			}
 		}
@@ -130,13 +130,16 @@ public class Level {
 		
 		Game.getScreen().highlightTileAtWorldCoordinates(x, y, levelScaleFactor);
 		
-		return Tile.tiles[tiles[sourcex + sourcey * levelImageWidth]];
+		int tileId = tiles[sourcey][sourcex];
+		return Tile.tiles.get(tileId);
 	}
 	
 	public Tile getTileAtSourceImageCoordinates(int x, int y) {
 		if (0 > x || x >= levelImageWidth || 0 > y || y >= levelImageHeight)
 			return Tile.VOID;
-		return Tile.tiles[tiles[x + y * levelImageWidth]];
+		
+		int tileId = tiles[y][x];
+		return Tile.tiles.get(tileId);
 	}
 
 	public void addPlayer(Player player) {

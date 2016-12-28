@@ -19,16 +19,17 @@ import ca.vanzeben.game.level.tiles.Tile;
 public class Game extends Canvas implements Runnable {
 	private static final long serialVersionUID = 1L;
 
-	public static final int SCREEN_WIDTH = 240*2;
+	public static final int SCREEN_WIDTH = 240 * 2;
 	public static final int SCREEN_HEIGHT = SCREEN_WIDTH / 12 * 9;
 	public static final int SCALE = 1;
 
 	public static final String NAME = "Game";
-	public static final Dimension DIMENSIONS = new Dimension(SCREEN_WIDTH * SCALE, SCREEN_HEIGHT * SCALE);
+	public static final Dimension DIMENSIONS = new Dimension(SCREEN_WIDTH * SCALE,
+			SCREEN_HEIGHT * SCALE);
 	private static Game game;
 	private static Screen screen;
 	private static Level level;
-	
+
 	public JFrame frame;
 
 	private Thread thread;
@@ -46,7 +47,7 @@ public class Game extends Canvas implements Runnable {
 	public WindowHandler windowHandler;
 	public Player player;
 
-	public boolean debug = true;
+	public boolean debug = false;
 	public boolean isApplet = false;
 
 	public void init() {
@@ -54,13 +55,12 @@ public class Game extends Canvas implements Runnable {
 
 		characterSheet.displayInfo();
 
-		int index = 0;
-
 		screen = new Screen(SCREEN_WIDTH, SCREEN_HEIGHT);
 		input = new InputHandler(this);
 		level = new Level("/levels/water_test_level.png");
 		level.setTileAt(3, 3, Tile.STONE);
-		
+		level.setTileAt(10, 2, Tile.GRASS2);
+
 		player = new Player(level, 100, 100, input,
 				JOptionPane.showInputDialog(this, "Please enter a username"),
 				characterSheet);
@@ -149,11 +149,20 @@ public class Game extends Canvas implements Runnable {
 		int screenY = player.y() - (screen.height / 2);
 
 		// Limit the screen position
-		screenX = Math.max(0, screenX);		// if < 0 set to 0
+		screenX = Math.max(0, screenX); // if < 0 set to 0
 		screenY = Math.max(0, screenY);
-	  screenX = Math.min((level.getLevelWidth() - screen.width), screenX);		// if > max, set to max
-		screenY = Math.min((level.getLevelHeight() - screen.height), screenY);		// if > max, set to max
-		
+		screenX = Math.min((level.getLevelWidth() - screen.width), screenX); // if >
+																																					// max,
+																																					// set
+																																					// to
+																																					// max
+		screenY = Math.min((level.getLevelHeight() - screen.height), screenY); // if
+																																						// >
+																																						// max,
+																																						// set
+																																						// to
+																																						// max
+
 		screen.setScreenPosition(screenX, screenY);
 
 		// *****************************************************************************************
@@ -162,10 +171,13 @@ public class Game extends Canvas implements Runnable {
 		level.renderTiles(screen);
 		level.renderEntities(screen);
 
-		screen.highlightTileAtScreenCoordinates(screen.getMouseX(), screen.getMouseY(), level.getTileDisplaySize());
-		screen.displayMouseCoordinatesAtMouse();
-		screen.displayPixelScale(50);
-		
+		if (debug) {
+			screen.highlightTileAtScreenCoordinates(screen.getMouseX(),
+					screen.getMouseY(), level.getTileDisplaySize());
+			screen.displayMouseCoordinatesAtMouse();
+			screen.displayPixelScale(50);
+		}
+
 		// *****************************************************************************************
 		// Dispose of current context and show the rendered buffer
 
