@@ -169,13 +169,13 @@ public class Player {
 		int dy = y;
 
 		if (tickCount % 60 < 15) {
-			screen.render(dx, dy, sheet, 0, 0, Screen.MirrorDirection.NONE, 1);
+			screen.render(dx, dy, sheet, 0, 0, Screen.MirrorDirection.NONE);
 		} else if (15 <= tickCount % 60 && tickCount % 60 < 30) {
-			screen.render(dx, dy, sheet, 0, 1, Screen.MirrorDirection.NONE, 1);
+			screen.render(dx, dy, sheet, 0, 1, Screen.MirrorDirection.NONE);
 		} else if (30 <= tickCount % 60 && tickCount % 60 < 45) {
-			screen.render(dx, dy, sheet, 0, 2, Screen.MirrorDirection.NONE, 1);
+			screen.render(dx, dy, sheet, 0, 2, Screen.MirrorDirection.NONE);
 		} else {
-			screen.render(dx, dy, sheet, 0, 3, Screen.MirrorDirection.NONE, 1);
+			screen.render(dx, dy, sheet, 0, 3, Screen.MirrorDirection.NONE);
 		}
 
 		if (debug) {

@@ -10,7 +10,7 @@ public class Font {
         for (int i = 0; i < msg.length(); i++) {
             int charIndex = chars.indexOf(msg.charAt(i));
             if (charIndex >= 0)
-                screen.render(x + (i * 8), y, fontSheet, charIndex + 30 * 32, Screen.MirrorDirection.NONE, scale);
+                screen.render(x + (i * 8), y, fontSheet, charIndex + 30 * 32, Screen.MirrorDirection.NONE, fontSheet.getSpriteWidth()*scale, fontSheet.getSpriteHeight()*scale);
         }
     }
 }

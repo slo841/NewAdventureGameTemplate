@@ -57,7 +57,7 @@ public abstract class Tile {
 	public abstract void tick();
 
 	public abstract void render(Screen screen, Level level, int x, int y,
-			int scale);
+			int displayWidth, int displayHeight);
 
 	public int getId() {
 		return id;

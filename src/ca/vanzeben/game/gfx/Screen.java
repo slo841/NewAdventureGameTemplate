@@ -6,6 +6,7 @@ import java.awt.image.BufferedImage;
 import java.awt.image.DataBufferInt;
 
 import ca.vanzeben.game.Game;
+import ca.vanzeben.game.gfx.Screen.MirrorDirection;
 import ca.vanzeben.game.level.Level;
 
 /***
@@ -38,18 +39,18 @@ import ca.vanzeben.game.level.Level;
  */
 public class Screen {
 	private boolean debug = false;
-	
+
 	public static enum MirrorDirection {
 		Y, X, BOTH, NONE
 	}
-	
+
 	private int x = 0; // Number of pixels to offset screen by (within the
-										// level image)
+											// level image)
 	private int y = 0;
 
 	private int width;
 	private int height;
-	
+
 	private int mouseX, mouseY;
 
 	private Graphics graphicsContext = null; // set by setGraphicsContext();
@@ -105,7 +106,8 @@ public class Screen {
 	 * @param scale
 	 */
 	public void render(int xPos, int yPos, SpriteSheet sheet, int tileRow,
-			int tileCol, MirrorDirection mirrorDir, int scale) {
+			int tileCol, MirrorDirection mirrorDir, int displayWidth,
+			int displayHeight) {
 		if (graphicsContext == null) {
 			System.err.println(
 					"Graphics context is null. Canvas object for Game must call setGraphicsContext( getBufferStrategy().getDrawGraphics() );");
@@ -121,25 +123,45 @@ public class Screen {
 
 		int destx1 = xPos;
 		int desty1 = yPos;
-		int destx2 = destx1 + sheet.getSpriteWidth() * scale;
-		int desty2 = desty1 + sheet.getSpriteHeight() * scale;
+		int destx2 = destx1 + displayWidth;
+		int desty2 = desty1 + displayHeight;
 
 		this.graphicsContext.drawImage(sheet.getImage(), destx1, desty1, destx2,
 				desty2, sourcex1, sourcey1, sourcex2, sourcey2, null);
 
 		// ****** DEBUG ******
 		if (debug) {
-			this.graphicsContext.drawRect(destx1, desty1,
-					sheet.getSpriteWidth() * scale, sheet.getSpriteHeight() * scale);
+			this.graphicsContext.drawRect(destx1, desty1, displayWidth,
+					displayHeight);
 		}
 
 		// TODO: mirroring?
 	}
 
+	/***
+	 * Render a tile to the screen at world coordinates xPos, yPos. This version
+	 * does not re-scale the tile image. Call the overloaded render() to specify
+	 * the final display size.
+	 * 
+	 * @param xPos
+	 * @param yPos
+	 * @param sheet
+	 * @param tileRow
+	 * @param tileCol
+	 * @param mirrorDir
+	 */
+	public void render(int xPos, int yPos, SpriteSheet sheet, int tileRow,
+			int tileCol, MirrorDirection mirrorDir) {
+
+		render(xPos, yPos, sheet, tileRow, tileCol, mirrorDir,
+				sheet.getSpriteWidth(), sheet.getSpriteHeight());
+	}
+
 	public void render(int xPos, int yPos, SpriteSheet sheet, int tileId,
-			MirrorDirection mirrorDir, int scale) {
+			MirrorDirection mirrorDir, int displayWidth, int displayHeight) {
 		render(xPos, yPos, sheet, tileId / sheet.getNumSpritesWidth(),
-				tileId % sheet.getNumSpritesWidth(), mirrorDir, scale);
+				tileId % sheet.getNumSpritesWidth(), mirrorDir, displayWidth,
+				displayHeight);
 	}
 
 	/**
@@ -252,8 +274,9 @@ public class Screen {
 	public int getWidth() {
 		return width;
 	}
-	
+
 	public int getHeight() {
 		return height;
 	}
+
 }

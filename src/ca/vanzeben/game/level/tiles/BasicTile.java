@@ -44,10 +44,12 @@ public class BasicTile extends Tile {
 	/***
 	 * World (x, y) coordinates.
 	 */
-	public void render(Screen screen, Level level, int x, int y, int scale) {
+	public void render(Screen screen, Level level, int x, int y, int displayWidth,
+			int displayHeight) {
 		for (int layer = 0; layer < this.imageLocLayers.length; layer++) {
 			screen.render(x, y, tileSheet, imageLocLayers[layer][0],
-					imageLocLayers[layer][1], Screen.MirrorDirection.NONE, scale);
+					imageLocLayers[layer][1], Screen.MirrorDirection.NONE,
+					displayWidth, displayHeight);
 		}
 	}
 }
