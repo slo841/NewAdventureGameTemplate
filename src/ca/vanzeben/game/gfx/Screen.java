@@ -20,20 +20,9 @@ import ca.vanzeben.game.level.Level;
  * entities on the screen. This includes both background tiles and foreground
  * entities.
  * 
- * NOTE: You must run setGraphicsContext before rendering anything so the screen
- * renders to the correct image buffer. Very briefly, your game Canvas object
- * has a buffering strategy in which you render the next frame image before it
- * gets displayed; then the Canvas object tells that frame to display and you
- * will want to render to the next frame. In other words, you don't want to try
- * and render to the image that's being displayed as the current frame because
- * that can lead to visual artifacts.
- * 
- * All the buffer swaping is handled for you by the BufferStrategy in your
- * Canvas. But to be sure this class renders to the correct buffer, you must run
- * setGraphicsContext.
- * 
- * This currently happens in Game (which is a Canvas) with the line:
- * setGraphicsContext( this.getBufferStrategy().getDrawGraphics() );
+ * NOTE: run reset() before rendering anything if you wish to start from a blank
+ * image. run getImage() to return the current image. The Game class does this
+ * when it wants to paint the image on to the actual window pane.
  * 
  * @author David
  *
@@ -172,6 +161,14 @@ public class Screen {
 				displayHeight);
 	}
 
+  public void renderTextAtWorldCoordinates(String msg, Font font, int x, int y, int scale) {
+  	font.render(msg, this, x, y, scale);
+  }
+  
+  public void renderTextAtScreenCoordinates(String msg, Font font, int x, int y, int scale) {
+  	font.render(msg, this, screenXCoordToWorldCoord(x), screenYCoordToWorldCoord(y), scale);
+  }
+	
 	/**
 	 * Sets the screen position in the global (x, y) coordinate system.
 	 * 
@@ -226,19 +223,19 @@ public class Screen {
 		for (int dx = 0; dx < this.width; dx += increment) {
 			int worldX = (x + dx);
 
-			Font.render("" + worldX, this, worldX, y + 10, 1);
+			Font.DEFAULT.render("" + worldX, this, worldX, y + 10, 1);
 		}
 
 		for (int dy = 0; dy < this.height; dy += increment) {
 			int worldY = (y + dy);
 
-			Font.render("" + worldY, this, x + 10, worldY, 1);
+			Font.DEFAULT.render("" + worldY, this, x + 10, worldY, 1);
 		}
 	}
 
 	public void displayMouseCoordinatesAtMouse() {
 		this.graphicsContext.drawRect(mouseX, mouseY, 3, 3);
-		Font.render("" + mouseX + ", " + mouseY, this,
+		Font.DEFAULT.render("" + mouseX + ", " + mouseY, this,
 				screenXCoordToWorldCoord(mouseX), screenYCoordToWorldCoord(mouseY - 10),
 				1);
 	}

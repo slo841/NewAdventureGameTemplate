@@ -11,6 +11,7 @@ import javax.swing.JFrame;
 import javax.swing.JOptionPane;
 
 import ca.vanzeben.game.entities.Player;
+import ca.vanzeben.game.gfx.Font;
 import ca.vanzeben.game.gfx.Screen;
 import ca.vanzeben.game.gfx.SpriteSheet;
 import ca.vanzeben.game.level.Level;
@@ -173,6 +174,9 @@ public class Game extends Canvas implements Runnable {
 		level.renderTiles(screen);
 		level.renderEntities(screen);
 
+		String msg = "Wizard Adventure";
+		screen.renderTextAtScreenCoordinates(msg, Font.DEFAULT, screen.getWidth() - Font.DEFAULT.getWidthOf(msg)*3, 10, 3);
+		
 		if (debug) {
 			screen.highlightTileAtScreenCoordinates(screen.getMouseX(),
 					screen.getMouseY(), level.getTileDisplaySize());

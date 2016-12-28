@@ -161,40 +161,27 @@ public class Player {
 	}
 
 	public void render(Screen screen) {
-		int walkingSpeed = 4;
-		int flipTop = (numSteps >> walkingSpeed) & 1;
-		int flipBottom = (numSteps >> walkingSpeed) & 1;
-
-		int dx = x;
-		int dy = y;
-
-		if (tickCount % 60 < 15) {
-			screen.render(dx, dy, sheet, 0, 0, Screen.MirrorDirection.NONE);
-		} else if (15 <= tickCount % 60 && tickCount % 60 < 30) {
-			screen.render(dx, dy, sheet, 0, 1, Screen.MirrorDirection.NONE);
-		} else if (30 <= tickCount % 60 && tickCount % 60 < 45) {
-			screen.render(dx, dy, sheet, 0, 2, Screen.MirrorDirection.NONE);
-		} else {
-			screen.render(dx, dy, sheet, 0, 3, Screen.MirrorDirection.NONE);
-		}
+		renderAnimatedStanding(screen);
 
 		if (debug) {
-			screen.highlightTileAtWorldCoordinates(leftX(), topY(),
-					level.getTileDisplaySize());
-			screen.highlightTileAtWorldCoordinates(leftX(), bottomY(),
-					level.getTileDisplaySize());
-			screen.highlightTileAtWorldCoordinates(rightX(), topY(),
-					level.getTileDisplaySize());
-			screen.highlightTileAtWorldCoordinates(rightX(), bottomY(),
-					level.getTileDisplaySize());
-			
-			Font.render("" + x + ", " + y, screen,
-					dx - ((username.length() - 1) / 2 * 8), dy - 10, 1);
+			renderDebuggingElements(screen);
 		}
 
 		if (username != null) {
-			Font.render(username, screen, x - ((username.length() - 1) / 2 * 8),
+			Font.DEFAULT.render(username, screen, x - ((username.length() - 1) / 2 * 8),
 					y - 10, 1);
+		}
+	}
+
+	private void renderAnimatedStanding(Screen screen) {
+		if (tickCount % 60 < 15) {
+			screen.render(x, y, sheet, 0, 0, Screen.MirrorDirection.NONE);
+		} else if (15 <= tickCount % 60 && tickCount % 60 < 30) {
+			screen.render(x, y, sheet, 0, 1, Screen.MirrorDirection.NONE);
+		} else if (30 <= tickCount % 60 && tickCount % 60 < 45) {
+			screen.render(x, y, sheet, 0, 2, Screen.MirrorDirection.NONE);
+		} else {
+			screen.render(x, y, sheet, 0, 3, Screen.MirrorDirection.NONE);
 		}
 	}
 
@@ -227,5 +214,19 @@ public class Player {
 
 	public String getUsername() {
 		return this.username;
+	}
+
+	private void renderDebuggingElements(Screen screen) {
+		screen.highlightTileAtWorldCoordinates(leftX(), topY(),
+				level.getTileDisplaySize());
+		screen.highlightTileAtWorldCoordinates(leftX(), bottomY(),
+				level.getTileDisplaySize());
+		screen.highlightTileAtWorldCoordinates(rightX(), topY(),
+				level.getTileDisplaySize());
+		screen.highlightTileAtWorldCoordinates(rightX(), bottomY(),
+				level.getTileDisplaySize());
+
+		Font.DEFAULT.render("" + x + ", " + y, screen,
+				x - ((username.length() - 1) / 2 * 8), y - 10, 1);
 	}
 }
