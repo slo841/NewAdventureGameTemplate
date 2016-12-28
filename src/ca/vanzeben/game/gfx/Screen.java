@@ -37,22 +37,19 @@ import ca.vanzeben.game.level.Level;
  *
  */
 public class Screen {
-	public static final int MAP_WIDTH = 64;
-	public static final int MAP_WIDTH_MASK = MAP_WIDTH - 1;
-
+	private boolean debug = false;
+	
 	public static enum MirrorDirection {
 		Y, X, BOTH, NONE
 	}
-
-	public int[] nextFramePixels;
-
-	public int x = 0; // Number of pixels to offset screen by (within the
+	
+	private int x = 0; // Number of pixels to offset screen by (within the
 										// level image)
-	public int y = 0;
+	private int y = 0;
 
-	public int width;
-	public int height;
-
+	private int width;
+	private int height;
+	
 	private int mouseX, mouseY;
 
 	private Graphics graphicsContext = null; // set by setGraphicsContext();
@@ -60,8 +57,6 @@ public class Screen {
 	public Screen(int width, int height) {
 		this.width = width;
 		this.height = height;
-
-		nextFramePixels = new int[width * height];
 	}
 
 	/***
@@ -76,7 +71,7 @@ public class Screen {
 			return;
 		}
 
-		int dx = (tx / tileSize)* tileSize;
+		int dx = (tx / tileSize) * tileSize;
 		int dy = (ty / tileSize) * tileSize;
 
 		dx -= x; // change world coordinates (xPos, yPos) to screen coordinates
@@ -133,55 +128,16 @@ public class Screen {
 				desty2, sourcex1, sourcey1, sourcex2, sourcey2, null);
 
 		// ****** DEBUG ******
-		this.graphicsContext.drawRect(destx1, desty1,
-				sheet.getSpriteWidth() * scale, sheet.getSpriteHeight() * scale);
+		if (debug) {
+			this.graphicsContext.drawRect(destx1, desty1,
+					sheet.getSpriteWidth() * scale, sheet.getSpriteHeight() * scale);
+		}
 
-		// boolean mirrorX = (mirrorDir == MirrorDirection.BOTH
-		// || mirrorDir == MirrorDirection.X);
-		// boolean mirrorY = (mirrorDir == MirrorDirection.BOTH
-		// || mirrorDir == MirrorDirection.Y);
-		//
-		// int scaleMap = scale - 1;
-		//
-		// int tileOffset = (tileCol * sheet.getSpriteWidth())
-		// + (tileRow * sheet.getSpriteHeight()) * sheet.getPixelWidth();
-		//
-		// for (int y = 0; y < sheet.getSpriteHeight(); y++) {
-		// int ySheet = y;
-		// if (mirrorY)
-		// ySheet = (sheet.getSpriteHeight() - 1) - y;
-		//
-		// int yPixel = y + yPos + (y * scaleMap)
-		// - ((scaleMap * sheet.getSpriteHeight()) / 2);
-		//
-		// for (int x = 0; x < sheet.getSpriteWidth(); x++) {
-		// int xSheet = x;
-		// if (mirrorX)
-		// xSheet = (sheet.getSpriteWidth() - 1) - x;
-		// int xPixel = x + xPos + (x * scaleMap)
-		// - ((scaleMap * sheet.getSpriteWidth()) / 2);
-		//
-		// // int col = (colour >> (sheet.getPixels()[xSheet
-		// // + ySheet * sheet.getPixelWidth() + tileOffset] * 8)) & 255;
-		//
-		// int col = sheet.getPixels()[xSheet + ySheet * sheet.getPixelWidth()
-		// + tileOffset];
-		//
-		// for (int yScale = 0; yScale < scale; yScale++) {
-		// if (yPixel + yScale < 0 || yPixel + yScale >= height)
-		// continue;
-		// for (int xScale = 0; xScale < scale; xScale++) {
-		// if (xPixel + xScale < 0 || xPixel + xScale >= width)
-		// continue;
-		// nextFramePixels[(xPixel + xScale)
-		// + (yPixel + yScale) * width] = col;
-		// }
-		// }
-		// }
-		// }
+		// TODO: mirroring?
 	}
 
-	public void render(int xPos, int yPos, SpriteSheet sheet, int tileId, MirrorDirection mirrorDir, int scale) {
+	public void render(int xPos, int yPos, SpriteSheet sheet, int tileId,
+			MirrorDirection mirrorDir, int scale) {
 		render(xPos, yPos, sheet, tileId / sheet.getNumSpritesWidth(),
 				tileId % sheet.getNumSpritesWidth(), mirrorDir, scale);
 	}
@@ -195,21 +151,6 @@ public class Screen {
 	public void setScreenPosition(int xOffset, int yOffset) {
 		this.x = xOffset;
 		this.y = yOffset;
-	}
-
-	/***
-	 * Copy pixels from nextFrame array to live image array. Do this before
-	 * displaying.
-	 */
-	public void updateScreenPixels() {
-		// for (int y = 0; y < height; y++) {
-		// for (int x = 0; x < width; x++) {
-		// int colourCode = nextFramePixels[x + y * width];
-		// // if (colourCode < 255)
-		// // pixels[x + y * WIDTH] = colours[colourCode];
-		// screenPixels[x + y * width] = colourCode;
-		// }
-		// }
 	}
 
 	public void setGraphicsContext(Graphics g) {
@@ -268,7 +209,8 @@ public class Screen {
 	public void displayMouseCoordinatesAtMouse() {
 		this.graphicsContext.drawRect(mouseX, mouseY, 3, 3);
 		Font.render("" + mouseX + ", " + mouseY, this,
-				screenXCoordToWorldCoord(mouseX), screenYCoordToWorldCoord(mouseY - 10), 1);
+				screenXCoordToWorldCoord(mouseX), screenYCoordToWorldCoord(mouseY - 10),
+				1);
 	}
 
 	public int worldXCoordToScreenCoord(int wx) {
@@ -305,5 +247,13 @@ public class Screen {
 	public void setMouseCoordinates(int x2, int y2) {
 		mouseX = x2;
 		mouseY = y2;
+	}
+
+	public int getWidth() {
+		return width;
+	}
+	
+	public int getHeight() {
+		return height;
 	}
 }

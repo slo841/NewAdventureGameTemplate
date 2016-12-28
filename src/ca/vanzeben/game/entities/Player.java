@@ -156,12 +156,6 @@ public class Player {
 		} else {
 			isMoving = false;
 		}
-		// if (level.getTile(this.x >> 3, this.y >> 3).getId() == 3) {
-		// isSwimming = true;
-		// }
-		// if (isSwimming && level.getTile(this.x >> 3, this.y >> 3).getId() != 3) {
-		// isSwimming = false;
-		// }
 
 		tickCount++;
 	}
@@ -170,48 +164,6 @@ public class Player {
 		int walkingSpeed = 4;
 		int flipTop = (numSteps >> walkingSpeed) & 1;
 		int flipBottom = (numSteps >> walkingSpeed) & 1;
-
-		// if (movingDir == 1) {
-		// xTile += 2;
-		// } else if (movingDir > 1) {
-		// xTile += 4 + ((numSteps >> walkingSpeed) & 1) * 2;
-		// flipTop = (movingDir - 1) % 2;
-		// }
-
-		// int xOffset = x;
-		// int yOffset = y;
-
-		// if (isSwimming) {
-		// int waterColour = 0;
-		// yOffset += 4;
-		// if (tickCount % 60 < 15) {
-		// waterColour = Colours.get(-1, -1, 225, -1);
-		// } else if (15 <= tickCount % 60 && tickCount % 60 < 30) {
-		// yOffset -= 1;
-		// waterColour = Colours.get(-1, 225, 115, -1);
-		// } else if (30 <= tickCount % 60 && tickCount % 60 < 45) {
-		// waterColour = Colours.get(-1, 115, -1, 225);
-		// } else {
-		// yOffset -= 1;
-		// waterColour = Colours.get(-1, 225, 115, -1);
-		// }
-		// screen.render(xOffset, yOffset + 3, 0 + 27 * 32, waterColour, 0x00, 1);
-		// screen.render(xOffset + 8, yOffset + 3, 0 + 27 * 32, waterColour, 0x01,
-		// 1);
-		// }
-		// screen.render(xOffset + (modifier * flipTop), yOffset, xTile + yTile *
-		// 32,
-		// colour, flipTop, scale);
-		// screen.render(xOffset + modifier - (modifier * flipTop), yOffset,
-		// (xTile + 1) + yTile * 32, colour, flipTop, scale);
-
-		// if (!isSwimming) {
-		// screen.render(xOffset + (modifier * flipBottom), yOffset + modifier,
-		// xTile + (yTile + 1) * 32, colour, flipBottom, scale);
-		// screen.render(xOffset + modifier - (modifier * flipBottom),
-		// yOffset + modifier, (xTile + 1) + (yTile + 1) * 32, colour,
-		// flipBottom, scale);
-		// }
 
 		int dx = x;
 		int dy = y;
@@ -226,10 +178,6 @@ public class Player {
 			screen.render(dx, dy, sheet, 0, 3, Screen.MirrorDirection.NONE, 1);
 		}
 
-		Font.render("" + x + ", " + y, screen,
-				dx - ((username.length() - 1) / 2 * 8), dy - 10, 1);
-
-		// *** debug
 		if (debug) {
 			screen.highlightTileAtWorldCoordinates(leftX(), topY(),
 					level.getTileDisplaySize());
@@ -239,13 +187,15 @@ public class Player {
 					level.getTileDisplaySize());
 			screen.highlightTileAtWorldCoordinates(rightX(), bottomY(),
 					level.getTileDisplaySize());
+			
+			Font.render("" + x + ", " + y, screen,
+					dx - ((username.length() - 1) / 2 * 8), dy - 10, 1);
 		}
 
-		// if (username != null) {
-		// Font.render(username, screen, xOffset - ((username.length() - 1) / 2 *
-		// 8),
-		// yOffset - 10, Colours.get(-1, -1, -1, 555), 1);
-		// }
+		if (username != null) {
+			Font.render(username, screen, x - ((username.length() - 1) / 2 * 8),
+					y - 10, 1);
+		}
 	}
 
 	/***

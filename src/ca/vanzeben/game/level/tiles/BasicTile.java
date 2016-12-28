@@ -1,6 +1,7 @@
 package ca.vanzeben.game.level.tiles;
 
 import ca.vanzeben.game.gfx.Screen;
+import ca.vanzeben.game.gfx.SpriteSheet;
 import ca.vanzeben.game.level.Level;
 
 public class BasicTile extends Tile {
@@ -16,8 +17,8 @@ public class BasicTile extends Tile {
 	 * 
 	 * @param levelColour
 	 */
-	public BasicTile(int[][] imageLocations, int levelColour) {
-		super(false, false, levelColour);
+	public BasicTile(SpriteSheet sheet, int[][] imageLocations, int levelColour) {
+		super(sheet, false, false, levelColour);
 		this.imageLocLayers = imageLocations;
 	}
 
@@ -33,8 +34,8 @@ public class BasicTile extends Tile {
 	 * @param levelColour
 	 *          color this tile will be represented by in level image.
 	 */
-	public BasicTile(int x, int y, int levelColour) {
-		this(new int[][] { { x, y } }, levelColour);
+	public BasicTile(SpriteSheet sheet, int x, int y, int levelColour) {
+		this(sheet, new int[][] { { x, y } }, levelColour);
 	}
 
 	public void tick() {

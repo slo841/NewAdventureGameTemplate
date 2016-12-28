@@ -37,12 +37,6 @@ public class Game extends Canvas implements Runnable {
 	public boolean running = false;
 	public int tickCount = 0;
 
-	// private int[] colours = new int[6 * 6 * 6];
-
-	public SpriteSheet characterSheet = new SpriteSheet("characters",
-			"/entities/spritestrip.png", 1, 6);
-	public SpriteSheet backgroundTiles;
-
 	public InputHandler input;
 	public WindowHandler windowHandler;
 	public Player player;
@@ -53,7 +47,7 @@ public class Game extends Canvas implements Runnable {
 	public void init() {
 		game = this;
 
-		characterSheet.displayInfo();
+		SpriteSheet.characterSheet.displayInfo();
 
 		screen = new Screen(SCREEN_WIDTH, SCREEN_HEIGHT);
 		input = new InputHandler(this);
@@ -63,7 +57,7 @@ public class Game extends Canvas implements Runnable {
 
 		player = new Player(level, 100, 100, input,
 				JOptionPane.showInputDialog(this, "Please enter a username"),
-				characterSheet);
+				SpriteSheet.characterSheet);
 		level.addPlayer(player);
 	}
 
@@ -145,23 +139,24 @@ public class Game extends Canvas implements Runnable {
 																	// anything!
 
 		// Calculate offset for the display so it's centered on the player
-		int screenX = player.x() - (screen.width / 2);
-		int screenY = player.y() - (screen.height / 2);
+		int screenX = player.x() - (screen.getWidth() / 2);
+		int screenY = player.y() - (screen.getHeight() / 2);
 
 		// Limit the screen position
 		screenX = Math.max(0, screenX); // if < 0 set to 0
 		screenY = Math.max(0, screenY);
-		screenX = Math.min((level.getLevelWidth() - screen.width), screenX); // if >
-																																					// max,
-																																					// set
-																																					// to
-																																					// max
-		screenY = Math.min((level.getLevelHeight() - screen.height), screenY); // if
-																																						// >
-																																						// max,
-																																						// set
-																																						// to
-																																						// max
+		screenX = Math.min((level.getLevelWidth() - screen.getWidth()), screenX); // if
+																																							// >
+		// max,
+		// set
+		// to
+		// max
+		screenY = Math.min((level.getLevelHeight() - screen.getHeight()), screenY); // if
+		// >
+		// max,
+		// set
+		// to
+		// max
 
 		screen.setScreenPosition(screenX, screenY);
 
