@@ -30,6 +30,8 @@ import ca.vanzeben.game.level.Level;
  *
  */
 public class Screen {
+	private static final Color DEFAULT_COLOR = Color.BLACK;
+
 	private boolean debug = false;
 
 	public static enum MirrorDirection {
@@ -84,7 +86,7 @@ public class Screen {
 
 		this.graphicsContext.setColor(Color.YELLOW);
 		this.graphicsContext.drawRect(destx1, desty1, tileSize, tileSize);
-		this.graphicsContext.setColor(Color.BLACK);
+		this.graphicsContext.setColor(DEFAULT_COLOR);
 	}
 
 	/***
@@ -332,5 +334,28 @@ public class Screen {
 	public Image getImage() {
 		return this.image;
 	}
+	
+	public void drawLine(int x1, int y1, int x2, int y2, Color c) {
+		this.graphicsContext.setColor(c);
+		this.graphicsContext.drawLine(x1, y1, x2, y2);
+		this.graphicsContext.setColor(DEFAULT_COLOR);
+	}
+	
+	public void drawRect(int x1, int y1, int width, int height, Color c) {
+		this.graphicsContext.setColor(c);
+		this.graphicsContext.drawRect(x1, y1, width, height);
+		this.graphicsContext.setColor(DEFAULT_COLOR);
+	}
+	
+	public void drawRoundRect(int x1, int y1, int width, int height, int arcWidth, int arcHeight, Color c) {
+		this.graphicsContext.setColor(c);
+		this.graphicsContext.drawRoundRect(x1, y1, width, height, arcWidth, arcHeight);
+		this.graphicsContext.setColor(DEFAULT_COLOR);
+	}
 
+	public void drawOval(int x1, int y1, int width, int height, Color c) {
+		this.graphicsContext.setColor(c);
+		this.graphicsContext.drawOval(x1, y1, width, height);
+		this.graphicsContext.setColor(DEFAULT_COLOR);
+	}
 }
