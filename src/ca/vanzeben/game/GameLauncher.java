@@ -18,7 +18,6 @@ public class GameLauncher extends Applet {
         setMaximumSize(Game.DIMENSIONS);
         setMinimumSize(Game.DIMENSIONS);
         setPreferredSize(Game.DIMENSIONS);
-        game.debug = DEBUG;
         game.isApplet = true;
     }
 
@@ -50,7 +49,6 @@ public class GameLauncher extends Applet {
         game.frame.setVisible(true);
 
         game.setWindowHandler(new WindowHandler(game));
-        game.debug = DEBUG;
 
         game.start();
     }
