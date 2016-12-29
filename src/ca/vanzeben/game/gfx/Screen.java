@@ -135,7 +135,6 @@ public class Screen {
 			this.graphicsContext.drawRect(destx1, desty1, displayWidth,
 					displayHeight);
 		}
-
 	}
 
 	// Scale and mirror the tile before display

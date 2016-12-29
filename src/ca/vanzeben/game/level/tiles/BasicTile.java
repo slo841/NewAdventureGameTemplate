@@ -1,10 +1,26 @@
 package ca.vanzeben.game.level.tiles;
 
+import java.util.ArrayList;
+
 import ca.vanzeben.game.gfx.Screen;
 import ca.vanzeben.game.gfx.SpriteSheet;
 import ca.vanzeben.game.level.Level;
 
 public class BasicTile extends Tile {
+
+	/***
+	 * Constructor for basic tile.
+	 * 
+	 * @param imageLocations
+	 *          List of location objects representing row, col for each display
+	 *          tile in the sprite sheet.
+	 * @param levelColour
+	 */
+	public BasicTile(SpriteSheet sheet, ArrayList<Loc> imageLocations,
+			int levelColour) {
+		super(sheet, false, false, levelColour);
+		this.imageLocLayers = imageLocations;
+	}
 
 	/***
 	 * Constructor for basic tile.
@@ -18,8 +34,7 @@ public class BasicTile extends Tile {
 	 * @param levelColour
 	 */
 	public BasicTile(SpriteSheet sheet, int[][] imageLocations, int levelColour) {
-		super(sheet, false, false, levelColour);
-		this.imageLocLayers = imageLocations;
+		this(sheet, Loc.asList(imageLocations), levelColour);
 	}
 
 	/***
@@ -35,7 +50,7 @@ public class BasicTile extends Tile {
 	 *          color this tile will be represented by in level image.
 	 */
 	public BasicTile(SpriteSheet sheet, int x, int y, int levelColour) {
-		this(sheet, new int[][] { { x, y } }, levelColour);
+		this(sheet, Loc.asList(x, y), levelColour);
 	}
 
 	public void tick() {
@@ -46,9 +61,9 @@ public class BasicTile extends Tile {
 	 */
 	public void render(Screen screen, Level level, int x, int y, int displayWidth,
 			int displayHeight) {
-		for (int layer = 0; layer < this.imageLocLayers.length; layer++) {
-			screen.render(x, y, tileSheet, imageLocLayers[layer][0],
-					imageLocLayers[layer][1], Screen.MirrorDirection.NONE,
+		for (int layer = 0; layer < this.imageLocLayers.size(); layer++) {
+			screen.render(x, y, tileSheet, imageLocLayers.get(layer).getX(),
+					imageLocLayers.get(layer).getY(), Screen.MirrorDirection.NONE,
 					displayWidth, displayHeight);
 		}
 	}

@@ -23,7 +23,7 @@ public abstract class Tile {
 			new int[][] { { 9, 0 }, { 0, 1 } }, 0xFF0000FF, 1000);
 
 	protected int id;
-	protected int[][] imageLocLayers;
+	protected ArrayList<Loc> imageLocLayers;
 	protected boolean solid;
 	protected boolean emitter;
 	private int levelColour;
@@ -61,5 +61,38 @@ public abstract class Tile {
 
 	public int getId() {
 		return id;
+	}
+
+	/***
+	 * Add a new tile image to display on top of the existing ones. Automatically
+	 * adds on top of all existing layers.
+	 * 
+	 * @param x
+	 *          column of tile in tilesheet to add (note: not pixel coordinate)
+	 * @param y
+	 *          row of tile in tilesheet to add
+	 */
+	public void addDisplayLayer(int x, int y) {
+		this.imageLocLayers.add(new Loc(x, y));
+	}
+
+	/***
+	 * Removes the top display layer.  Returns the Loc representing the tile coordinates for that layer.
+	 * @return
+	 */
+	public Loc removeDisplayLayer() {
+		return this.imageLocLayers.remove(imageLocLayers.size()-1);
+	}
+
+	/***
+	 * Removes layer from display. Returns the Loc representing the tile
+	 * coordinates for that layer.
+	 * 
+	 * @param layer
+	 *          layer index to remove
+	 * @return
+	 */
+	public Loc removeDisplayLayer(int layer) {
+		return this.imageLocLayers.remove(layer);
 	}
 }
