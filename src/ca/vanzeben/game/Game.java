@@ -20,7 +20,7 @@ import ca.vanzeben.game.level.tiles.Tile;
 public class Game extends Canvas implements Runnable {
 	private static final long serialVersionUID = 1L;
 
-	public static final int SCREEN_WIDTH = 240 * 2;
+	public static final int SCREEN_WIDTH = 240 * 4;
 	public static final int SCREEN_HEIGHT = SCREEN_WIDTH / 12 * 9;
 	public static final int SCALE = 1;
 

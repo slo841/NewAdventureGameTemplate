@@ -157,20 +157,19 @@ public class Player {
 		}
 
 		if (username != null) {
-			Font.DEFAULT.render(username, screen, x - ((username.length() - 1) / 2 * 8),
-					y - 10, 1);
+			screen.renderTextAtWorldCoordinates(username, Font.DEFAULT, centerX() - Font.DEFAULT.getWidthOf(username)/2, y - 10, 1);
 		}
 	}
 
 	private void renderAnimatedStanding(Screen screen) {
 		if (tickCount % 60 < 15) {
-			screen.render(x, y, sheet, 0, 0, Screen.MirrorDirection.BOTH);
+			screen.render(x, y, sheet, 0, 0, Screen.MirrorDirection.NONE);
 		} else if (15 <= tickCount % 60 && tickCount % 60 < 30) {
-			screen.render(x, y, sheet, 0, 1, Screen.MirrorDirection.BOTH);
+			screen.render(x, y, sheet, 0, 1, Screen.MirrorDirection.NONE);
 		} else if (30 <= tickCount % 60 && tickCount % 60 < 45) {
-			screen.render(x, y, sheet, 0, 2, Screen.MirrorDirection.BOTH);
+			screen.render(x, y, sheet, 0, 2, Screen.MirrorDirection.NONE);
 		} else {
-			screen.render(x, y, sheet, 0, 3, Screen.MirrorDirection.BOTH);
+			screen.render(x, y, sheet, 0, 3, Screen.MirrorDirection.NONE);
 		}
 	}
 
