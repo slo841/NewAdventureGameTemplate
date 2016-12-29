@@ -42,7 +42,7 @@ public class Game extends Canvas implements Runnable {
 
 	private Player player;
 
-	private boolean debug = true;
+	public boolean debug = false;
 	public boolean isApplet = false;
 
 	public void init() {
