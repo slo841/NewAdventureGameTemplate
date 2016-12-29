@@ -34,12 +34,12 @@ public class Game extends Canvas implements Runnable {
 	private static Screen screen;
 	private static Level level;
 	private static InputHandler input;
-	
+
 	public JFrame frame;
 
 	private boolean running = false;
 	private int tickCount = 0;
-	
+
 	private Player player;
 
 	public boolean debug = false;
@@ -81,26 +81,27 @@ public class Game extends Canvas implements Runnable {
 
 	public void run() {
 		long lastTime = System.nanoTime();
-		double nsPerTick = 1000000000D / 60D;
+		double nsPerTick = 1000000000D / 60D; // Desired 60 frames per second
 
 		int ticks = 0;
 		int frames = 0;
 
 		long lastTimer = System.currentTimeMillis();
-		double delta = 0;
+		double gameStepsToRun = 0;
 
 		init();
 
 		while (running) {
 			long now = System.nanoTime();
-			delta += (now - lastTime) / nsPerTick;
+			gameStepsToRun += (now - lastTime) / nsPerTick;
+			
 			lastTime = now;
 			boolean shouldRender = true;
 
-			while (delta >= 1) {
+			while (gameStepsToRun >= 1) {
 				ticks++;
 				tick();
-				delta -= 1;
+				gameStepsToRun -= 1;
 				shouldRender = true;
 			}
 
@@ -115,6 +116,7 @@ public class Game extends Canvas implements Runnable {
 				render();
 			}
 
+			// if one second has passed, display frames per second (for informational purposes)
 			if (System.currentTimeMillis() - lastTimer >= 1000) {
 				lastTimer += 1000;
 				debug(DebugLevel.INFO, ticks + " ticks, " + frames + " frames");
@@ -125,7 +127,7 @@ public class Game extends Canvas implements Runnable {
 	}
 
 	/***
-	 * Updates the game state once per frame. 
+	 * Updates the game state once per frame.
 	 */
 	public void tick() {
 		tickCount++;
@@ -141,10 +143,10 @@ public class Game extends Canvas implements Runnable {
 			createBufferStrategy(3);
 			return;
 		}
-		
+
 		Graphics g = bs.getDrawGraphics();
 		screen.reset(); // You must call this BEFORE you render
-																	// anything!
+										// anything!
 
 		// Set screen position centered on player
 		int screenX = player.x() - (screen.getWidth() / 2);
@@ -154,8 +156,8 @@ public class Game extends Canvas implements Runnable {
 		screenX = Math.max(0, screenX); // if < 0 set to 0
 		screenY = Math.max(0, screenY);
 		screenX = Math.min((level.getLevelWidth() - screen.getWidth()), screenX);
-		screenY = Math.min((level.getLevelHeight() - screen.getHeight()), screenY); 
-		
+		screenY = Math.min((level.getLevelHeight() - screen.getHeight()), screenY);
+
 		screen.setScreenPosition(screenX, screenY);
 
 		// *****************************************************************************************
@@ -165,8 +167,9 @@ public class Game extends Canvas implements Runnable {
 		level.renderEntities(screen);
 
 		String msg = "Wizard Adventure";
-		screen.renderTextAtScreenCoordinates(msg, Font.DEFAULT, screen.getWidth() - Font.DEFAULT.getWidthOf(msg)*3, 10, 3);
-		
+		screen.renderTextAtScreenCoordinates(msg, Font.DEFAULT,
+				screen.getWidth() - Font.DEFAULT.getWidthOf(msg) * 3, 10, 3);
+
 		if (debug) {
 			screen.highlightTileAtScreenCoordinates(screen.getMouseX(),
 					screen.getMouseY(), level.getTileDisplaySize());
@@ -178,7 +181,7 @@ public class Game extends Canvas implements Runnable {
 		// Dispose of current context and show the rendered buffer
 
 		g.drawImage(screen.getImage(), 0, 0, null);
-		
+
 		g.dispose();
 		bs.show();
 	}
