@@ -1,6 +1,8 @@
 package ca.vanzeben.game.level.tiles;
 
+import ca.vanzeben.game.gfx.Screen;
 import ca.vanzeben.game.gfx.SpriteSheet;
+import ca.vanzeben.game.level.Level;
 
 public class AnimatedTile extends BasicTile {
 
@@ -26,4 +28,11 @@ public class AnimatedTile extends BasicTile {
 					% animationTileCoords.length;
 		}
 	}
+	
+//	public void render(Screen screen, Level level, int x, int y, 
+//			int displayWidth, int displayHeight) {
+//		screen.render(x, y, tileSheet, animationTileCoords[currentAnimationIndex][0], 
+//				animationTileCoords[currentAnimationIndex][1], Screen.MirrorDirection.NONE, 
+//				displayWidth, displayHeight);
+//	}
 }

@@ -6,10 +6,12 @@ import java.awt.Graphics;
 import java.awt.image.BufferStrategy;
 import java.awt.image.BufferedImage;
 import java.awt.image.DataBufferInt;
+import java.util.ArrayList;
 
 import javax.swing.JFrame;
 import javax.swing.JOptionPane;
 
+import ca.vanzeben.game.entities.Coin;
 import ca.vanzeben.game.entities.Player;
 import ca.vanzeben.game.gfx.Font;
 import ca.vanzeben.game.gfx.Screen;
@@ -41,8 +43,10 @@ public class Game extends Canvas implements Runnable {
 	private int tickCount = 0;
 
 	private Player player;
+	private ArrayList<Coin> coinList;
+	private Coin coin;
 
-	public boolean debug = false;
+	private boolean debug = true;
 	public boolean isApplet = false;
 
 	public void init() {
@@ -55,11 +59,26 @@ public class Game extends Canvas implements Runnable {
 		level = new Level("/levels/water_test_level.png");
 		level.setTileAt(3, 3, Tile.STONE);
 		level.setTileAt(10, 2, Tile.GRASS2);
+		level.setTileAt(5, 1, Tile.WHALE);
 
 		player = new Player(level, 100, 100, input,
 				JOptionPane.showInputDialog(this, "Please enter a username"),
 				SpriteSheet.characterSheet);
+		coin = new Coin(100, 500, 5, level);
+		
 		level.addPlayer(player);
+		level.addTower(10*16, 20*16);
+		
+		level.addCoin(5*16, 5*16, 3);
+		level.addCoin(5*16, 6*16, 10);
+		
+		
+		
+		for (int i = 0; i < 10; i++) {
+			int x = (int)(Math.random()*1000);
+			int y = (int)(Math.random()*1000);
+			level.addWumpus(x, y);
+		}
 	}
 
 	public synchronized void start() {
@@ -140,7 +159,7 @@ public class Game extends Canvas implements Runnable {
 	public void render() {
 		BufferStrategy bs = getBufferStrategy();
 		if (bs == null) {
-			createBufferStrategy(3);
+			createBufferStrategy(2);
 			return;
 		}
 

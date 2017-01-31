@@ -19,8 +19,17 @@ public abstract class Tile {
 	public static final Tile GRASS2 = new BasicTile(SpriteSheet.tileSheet,
 			new int[][] { { 1, 0 }, { 11, 1 } }, 0x00FF00FF);
 
+	public static final Tile WHALE = new BasicTile(SpriteSheet.tileSheet,
+			new int[][] { {1, 0}, {6, 18} }, 0xFF00FF33);
+	
+//	public static final Tile WATER = new AnimatedTile(SpriteSheet.tileSheet,
+//			new int[][] { {19, 27}, {19, 28}, {19, 29}, {19, 30}, {19, 31}, {19, 32}, 
+//		{19, 33}, {19, 34}, {19, 35} }, 0xFF0000FF, 500);
+	
 	public static final Tile WATER = new AnimatedTile(SpriteSheet.tileSheet,
-			new int[][] { { 9, 0 }, { 0, 1 } }, 0xFF0000FF, 1000);
+			new int[][] { {9, 0}, {0, 1} }, 0xFF0000FF, 500);
+//	public static final Tile COIN = new BasicTile(SpriteSheet.tileSheet,
+//			new int[][] { {1, 0}, {6, 18} }, 0xFF00FF33);
 
 	protected int id;
 	protected ArrayList<Loc> imageLocLayers;

@@ -8,120 +8,38 @@ import ca.vanzeben.game.gfx.SpriteSheet;
 import ca.vanzeben.game.level.Level;
 import ca.vanzeben.game.level.tiles.Tile;
 
-public class Player {
+public class Player extends MovingEntity {
 	private boolean debug = false;
-	private int x, y;
-	private int width, height;
-	private Level level;
 
 	protected String name;
-	protected int speed = 15;
 	protected int numSteps = 0;
 	protected boolean isMoving;
 	protected int movingDir = 1;
 
 	private InputHandler input;
 	protected boolean isSwimming = false;
-	private int tickCount = 0;
 	private String username;
 
-	private SpriteSheet sheet;
+	private int money;
+	private static final int PLAYER_SPEED = 15;
 
-	public Player(Level level, int x, int y, InputHandler input, String username,
-			SpriteSheet sheet) {
-		this.x = x;
-		this.y = y;
-		this.level = level;
+	public Player(Level level, int x, int y, InputHandler input, String username, SpriteSheet sheet) {
+		super(x, y, PLAYER_SPEED, sheet, level);
 		this.input = input;
 		this.username = username;
-		this.sheet = sheet;
-		this.width = sheet.getSpriteWidth();
-		this.height = sheet.getSpriteHeight();
+		this.money = 0;
+	}
+	
+	public int getMoney() {
+		return money;
 	}
 
-	/***
-	 * Move the player by dx, dy
-	 * 
-	 * @param dx
-	 * @param dy
-	 */
-	public void move(int dx, int dy) {
-		if (dx != 0 && dy != 0) {
-			move(dx, 0);
-			move(0, dy);
-			numSteps--;
-			return;
-		}
-
-		numSteps++;
-		if (!willCollidedWithTile(dx, dy)) {
-			if (dy < 0)
-				movingDir = 0;
-			if (dy > 0)
-				movingDir = 1;
-			if (dx < 0)
-				movingDir = 2;
-			if (dx > 0)
-				movingDir = 3;
-			x += dx;
-			y += dy;
-		}
+	public void setMoney(int money) {
+		this.money = money;
 	}
-
-	public Tile getCurrentTileType() {
-		return this.level.getTileTypeAtWorldCoordinates(x, y);
-	}
-
-	public int x() {
-		return x;
-	}
-
-	public int leftX() {
-		return x;
-	}
-
-	public int rightX() {
-		return leftX() + this.width;
-	}
-
-	public int y() {
-		return y;
-	}
-
-	public int topY() {
-		return y;
-	}
-
-	public int bottomY() {
-		return topY() + this.height;
-	}
-
-	public int centerX() {
-		return x + this.width / 2;
-	}
-
-	public int centerY() {
-		return y + this.height / 2;
-	}
-
-	public String getName() {
-		return name;
-	}
-
-	public int getNumSteps() {
-		return numSteps;
-	}
-
-	public boolean isMoving() {
-		return isMoving;
-	}
-
-	public int getMovingDir() {
-		return movingDir;
-	}
-
-
-	public void tick() {
+	
+	@Override
+	public void move() {
 		int xDir = 0;
 		int yDir = 0;
 		if (input != null) {
@@ -145,19 +63,78 @@ public class Player {
 		} else {
 			isMoving = false;
 		}
+	}
+
+	/***
+	 * Move the player by dx, dy
+	 * 
+	 * @param dx
+	 * @param dy
+	 */
+	public void move(int dx, int dy) {
+		if (dx != 0 && dy != 0) {
+			move(dx, 0);
+			move(0, dy);
+			numSteps--;
+			return;
+		}
+
+		numSteps++;
+		if (!willCollideWithTile(dx, dy)) {
+			if (dy < 0)
+				movingDir = 0;
+			if (dy > 0)
+				movingDir = 1;
+			if (dx < 0)
+				movingDir = 2;
+			if (dx > 0)
+				movingDir = 3;
+			x += dx;
+			y += dy;
+		}
+	}
+
+	public Tile getCurrentTileType() {
+		return this.level.getTileTypeAtWorldCoordinates(x + width/2, y + 3*height/4);
+	}
+
+	public String getName() {
+		return name;
+	}
+
+	public int getNumSteps() {
+		return numSteps;
+	}
+
+	public boolean isMoving() {
+		return isMoving;
+	}
+
+	public int getMovingDir() {
+		return movingDir;
+	}
+
+	public void tick() {
+		move();
 
 		tickCount++;
 	}
 
 	public void render(Screen screen) {
-		renderAnimatedStanding(screen);
-
+		Tile current = this.getCurrentTileType();
+		if (current == Tile.WATER) {
+			screen.render(x, y, sheet, 6, 4, Screen.MirrorDirection.NONE);
+		} else {
+			renderAnimatedStanding(screen);
+		}
+		
 		if (debug) {
 			renderDebuggingElements(screen);
 		}
 
 		if (username != null) {
-			screen.renderTextAtWorldCoordinates(username, Font.DEFAULT, centerX() - Font.DEFAULT.getWidthOf(username)/2, y - 10, 1);
+			screen.renderTextAtWorldCoordinates(username, Font.DEFAULT,
+					centerX() - Font.DEFAULT.getWidthOf(username) / 2, y - 10, 1);
 		}
 	}
 
@@ -173,48 +150,27 @@ public class Player {
 		}
 	}
 
-	/***
-	 * Check if player is going to collide with a solid tile if x changes by dx
-	 * and y changes by dy
-	 * 
-	 * @param dx
-	 * @param dy
-	 * @return
-	 */
-	public boolean willCollidedWithTile(int dx, int dy) {
-		// Calculate coordinates of all 4 corners of player sprite
-		// Check each for collision
-
-		Tile upperLeftTile = level.getTileTypeAtWorldCoordinates(leftX() + dx,
-				topY() + dy);
-		Tile lowerLeftTile = level.getTileTypeAtWorldCoordinates(leftX() + dx,
-				bottomY() + dy);
-		Tile upperRightTile = level.getTileTypeAtWorldCoordinates(rightX() + dx,
-				topY() + dy);
-		Tile lowerRightTile = level.getTileTypeAtWorldCoordinates(rightX() + dx,
-				bottomY() + dy);
-
-		if (upperLeftTile.isSolid() || lowerLeftTile.isSolid()
-				|| upperRightTile.isSolid() || lowerRightTile.isSolid())
-			return true;
-		return false;
-	}
 
 	public String getUsername() {
 		return this.username;
 	}
 
 	private void renderDebuggingElements(Screen screen) {
-		screen.highlightTileAtWorldCoordinates(leftX(), topY(),
-				level.getTileDisplaySize());
-		screen.highlightTileAtWorldCoordinates(leftX(), bottomY(),
-				level.getTileDisplaySize());
-		screen.highlightTileAtWorldCoordinates(rightX(), topY(),
-				level.getTileDisplaySize());
-		screen.highlightTileAtWorldCoordinates(rightX(), bottomY(),
-				level.getTileDisplaySize());
+		screen.highlightTileAtWorldCoordinates(leftX(), topY(), level.getTileDisplaySize());
+		screen.highlightTileAtWorldCoordinates(leftX(), bottomY(), level.getTileDisplaySize());
+		screen.highlightTileAtWorldCoordinates(rightX(), topY(), level.getTileDisplaySize());
+		screen.highlightTileAtWorldCoordinates(rightX(), bottomY(), level.getTileDisplaySize());
 
-		Font.DEFAULT.render("" + x + ", " + y, screen,
-				x - ((username.length() - 1) / 2 * 8), y - 10, 1);
+		Font.DEFAULT.render("" + x + ", " + y, screen, x - ((username.length() - 1) / 2 * 8), y - 10, 1);
+	}
+
+	public void handleCollision(Entity e) {
+		if (e instanceof Coin) {
+			money += ((Coin) e).getValue();
+			e.markAsDead();
+		} else if (e instanceof Fireball) {
+			this.markAsDead();
+		}
+		
 	}
 }
